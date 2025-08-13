@@ -44,7 +44,7 @@ class Note(Card):
         if "text" not in card_dict.keys():
             return None
 
-        card: Optional[Note] = super().from_dict(card_dict)
+        card: Optional[Note] = super().base_from_dict(card_dict, CardType.NOTE)
         if card is None:
             return None
         card.raw_text = card_dict["text"]

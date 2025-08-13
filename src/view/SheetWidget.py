@@ -24,6 +24,7 @@ class SheetWidget(QScrollArea):
         self.grid_layout: QGridLayout
         """Grid layout that cards will be placed on."""
         self.preview_widget: QWidget = QWidget()
+        """Widget that is shown as a preview of drop during drag-and-drop operations."""
 
         # Generate blank sheet grid
         self.container_widget = QWidget()

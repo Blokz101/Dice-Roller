@@ -41,7 +41,7 @@ class Stat(Card):
         if "value" not in card_dict.keys():
             return None
 
-        card: Optional[Stat] = super().from_dict(card_dict)
+        card: Optional[Stat] = super().base_from_dict(card_dict, CardType.STAT)
         if card is None:
             return None
         card.value = card_dict["value"]

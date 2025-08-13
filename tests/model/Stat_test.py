@@ -7,20 +7,18 @@ class TestStat:
     def test_from_dict_valid(self):
         """Tests that valid dictionaries are converted to Stat objects correctly."""
         dicts_list: list[dict[str, Any]] = [
-            {"name": "Test Stat1", "card_type": 0, "value": 10},
-            {"name": "Test Stat2", "card_type": 0, "value": 5, "column": 3},
-            {"name": "Test Stat3", "card_type": 0, "value": 15, "row": 2},
-            {"name": "Test Stat4", "card_type": 0, "value": 20, "max": 25},
-            {"name": "Test Stat5", "card_type": 0, "value": 8, "min": 5},
+            {"name": "Test Stat1", "value": 10},
+            {"name": "Test Stat2", "value": 5, "column": 3},
+            {"name": "Test Stat3", "value": 15, "row": 2},
+            {"name": "Test Stat4", "value": 20, "max": 25},
+            {"name": "Test Stat5", "value": 8, "min": 5},
             {
                 "name": "Test Stat6",
-                "card_type": 0,
                 "value": 12,
                 "history": [("2025-01-01", "+2")],
             },
             {
                 "name": "Test Stat7",
-                "card_type": 0,
                 "value": 18,
                 "max": 20,
                 "min": 10,
@@ -64,11 +62,9 @@ class TestStat:
     def test_from_dict_invalid(self):
         """Tests that invalid dictionaries return None."""
         invalid_dict_list: list[dict[str, Any]] = [
-            {},  # Missing required name, card_type, and value
-            {"name": "Invalid Stat1"},  # Missing required card_type and value
-            {"card_type": 0},  # Missing required name and value
-            {"name": "Invalid Stat2", "card_type": 0},  # Missing required value
-            {"name": "Invalid Stat3", "value": 10},  # Missing required card_type
+            {},  # Missing required name and value
+            {"name": "Invalid Stat1"},  # Missing required value
+            {"value": 10},  # Missing required name
         ]
 
         for invalid_dict in invalid_dict_list:
@@ -77,20 +73,18 @@ class TestStat:
     def test_to_dict_valid(self):
         """Tests that Stat objects are converted to dictionaries correctly."""
         expected_dict_list: list[dict[str, Any]] = [
-            {"name": "Test Stat1", "card_type": 0, "value": 10},
-            {"name": "Test Stat2", "card_type": 0, "value": 5, "column": 3},
-            {"name": "Test Stat3", "card_type": 0, "value": 15, "row": 2},
-            {"name": "Test Stat4", "card_type": 0, "value": 20, "max": 25},
-            {"name": "Test Stat5", "card_type": 0, "value": 8, "min": 5},
+            {"name": "Test Stat1", "value": 10},
+            {"name": "Test Stat2", "value": 5, "column": 3},
+            {"name": "Test Stat3", "value": 15, "row": 2},
+            {"name": "Test Stat4", "value": 20, "max": 25},
+            {"name": "Test Stat5", "value": 8, "min": 5},
             {
                 "name": "Test Stat6",
-                "card_type": 0,
                 "value": 12,
                 "history": [("2025-01-01", "+2")],
             },
             {
                 "name": "Test Stat7",
-                "card_type": 0,
                 "value": 18,
                 "max": 20,
                 "min": 10,

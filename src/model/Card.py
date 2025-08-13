@@ -1,11 +1,12 @@
 from __future__ import annotations
+from abc import ABC, abstractmethod
 from typing import Optional, Any, TypeVar, Type
 from src import CardType
 
 CardT = TypeVar("CardT", bound="Card")
 
 
-class Card:
+class Card(ABC):
 
     def __init__(
         self,
@@ -34,16 +35,28 @@ class Card:
         # Other instance variables
 
     @classmethod
+    @abstractmethod
     def from_dict(cls: Type[CardT], card_dict: dict[str, Any]) -> Optional[CardT]:
         """
         Creates a Card object from a dict if possible.
         :param card_dict: Dictionary containing card attributes
         :returns: Card object or None if required attributes are not present
         """
-        if "name" not in card_dict.keys() or "card_type" not in card_dict.keys():
+
+    @classmethod
+    def base_from_dict(
+        cls: Type[CardT], card_dict: dict[str, Any], card_type: CardType
+    ) -> Optional[CardT]:
+        """
+        Creates a Card object from a dict if possible. Requires card type to be specified.
+        :param card_dict: Dictionary containing card attributes
+        :param card_type: The type of the card
+        :returns: Card object or None if required attributes are not present
+        """
+        if "name" not in card_dict.keys():
             return None
 
-        card: Card = cls(card_dict["name"], CardType(card_dict["card_type"]))
+        card: Card = cls(card_dict["name"], card_type)
         if "column" in card_dict.keys():
             card.column = card_dict["column"]
         if "row" in card_dict.keys():
@@ -57,14 +70,11 @@ class Card:
 
     def to_dict(self) -> dict[str, Any]:
         """
-        Converts the values to be stored in JSON to a dict.
+        Converts the values to a dict.
         Should be overridden by subclasses.
         :returns: Dict containing this cards values
         """
-        card_dict: dict[str, Any] = {
-            "name": self.name,
-            "card_type": self.card_type.value,
-        }
+        card_dict: dict[str, Any] = {"name": self.name}
         if self.column is not None:
             card_dict["column"] = self.column
         if self.row is not None:
