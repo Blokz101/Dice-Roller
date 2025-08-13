@@ -18,10 +18,15 @@ class Ui_DiceRollerWindow(object):
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.centralwidget)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.sheet_tab_widget = QtWidgets.QTabWidget(parent=self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Expanding,
+            QtWidgets.QSizePolicy.Policy.Preferred,
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.sheet_tab_widget.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.sheet_tab_widget.sizePolicy().hasHeightForWidth()
+        )
         self.sheet_tab_widget.setSizePolicy(sizePolicy)
         self.sheet_tab_widget.setMinimumSize(QtCore.QSize(0, 0))
         self.sheet_tab_widget.setTabsClosable(True)
@@ -31,8 +36,11 @@ class Ui_DiceRollerWindow(object):
         self.home_tab.setObjectName("home_tab")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.home_tab)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        self.homes_sheet = HomeSheet(parent=self.home_tab)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Preferred)
+        self.homes_sheet = HomeSheetWidget(parent=self.home_tab)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Preferred,
+            QtWidgets.QSizePolicy.Policy.Preferred,
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.homes_sheet.sizePolicy().hasHeightForWidth())
@@ -44,7 +52,9 @@ class Ui_DiceRollerWindow(object):
         self.sheet_tab_widget.addTab(self.home_tab, "")
         self.horizontalLayout.addWidget(self.sheet_tab_widget)
         self.widget = QtWidgets.QWidget(parent=self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Maximum, QtWidgets.QSizePolicy.Policy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Maximum, QtWidgets.QSizePolicy.Policy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.widget.sizePolicy().hasHeightForWidth())
@@ -58,10 +68,17 @@ class Ui_DiceRollerWindow(object):
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.widget_2)
         self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
-        spacerItem = QtWidgets.QSpacerItem(20, 30, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Fixed)
+        spacerItem = QtWidgets.QSpacerItem(
+            20,
+            30,
+            QtWidgets.QSizePolicy.Policy.Minimum,
+            QtWidgets.QSizePolicy.Policy.Fixed,
+        )
         self.verticalLayout_2.addItem(spacerItem)
         self.cmd_terminal = QtWidgets.QTextBrowser(parent=self.widget_2)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.cmd_terminal.sizePolicy().hasHeightForWidth())
@@ -94,8 +111,12 @@ class Ui_DiceRollerWindow(object):
         self.action_open_readme.setObjectName("action_open_readme")
         self.actionHome_Tab = QtGui.QAction(parent=DiceRollerWindow)
         self.actionHome_Tab.setObjectName("actionHome_Tab")
-        self.actionOpen_current_sheet_in_new_window = QtGui.QAction(parent=DiceRollerWindow)
-        self.actionOpen_current_sheet_in_new_window.setObjectName("actionOpen_current_sheet_in_new_window")
+        self.actionOpen_current_sheet_in_new_window = QtGui.QAction(
+            parent=DiceRollerWindow
+        )
+        self.actionOpen_current_sheet_in_new_window.setObjectName(
+            "actionOpen_current_sheet_in_new_window"
+        )
         self.action_move_window_to_new = QtGui.QAction(parent=DiceRollerWindow)
         self.action_move_window_to_new.setObjectName("action_move_window_to_new")
         self.action_show_home_sheet = QtGui.QAction(parent=DiceRollerWindow)
@@ -160,20 +181,33 @@ class Ui_DiceRollerWindow(object):
 
     def retranslateUi(self, DiceRollerWindow):
         _translate = QtCore.QCoreApplication.translate
-        DiceRollerWindow.setWindowTitle(_translate("DiceRollerWindow", "Marcus\'s Dice Roller"))
-        self.sheet_tab_widget.setTabText(self.sheet_tab_widget.indexOf(self.home_tab), _translate("DiceRollerWindow", "Home"))
+        DiceRollerWindow.setWindowTitle(
+            _translate("DiceRollerWindow", "Marcus's Dice Roller")
+        )
+        self.sheet_tab_widget.setTabText(
+            self.sheet_tab_widget.indexOf(self.home_tab),
+            _translate("DiceRollerWindow", "Home"),
+        )
         self.menuHelp.setTitle(_translate("DiceRollerWindow", "Help"))
         self.menuWindow.setTitle(_translate("DiceRollerWindow", "Window"))
         self.menuSheet.setTitle(_translate("DiceRollerWindow", "Sheet"))
         self.menuCard.setTitle(_translate("DiceRollerWindow", "Cards"))
         self.action_open_readme.setText(_translate("DiceRollerWindow", "README"))
         self.actionHome_Tab.setText(_translate("DiceRollerWindow", "Show Home sheet"))
-        self.actionOpen_current_sheet_in_new_window.setText(_translate("DiceRollerWindow", "Open current sheet in new window"))
-        self.action_move_window_to_new.setText(_translate("DiceRollerWindow", "Move current sheet to new window"))
-        self.action_show_home_sheet.setText(_translate("DiceRollerWindow", "Show home sheet"))
+        self.actionOpen_current_sheet_in_new_window.setText(
+            _translate("DiceRollerWindow", "Open current sheet in new window")
+        )
+        self.action_move_window_to_new.setText(
+            _translate("DiceRollerWindow", "Move current sheet to new window")
+        )
+        self.action_show_home_sheet.setText(
+            _translate("DiceRollerWindow", "Show home sheet")
+        )
         self.actionOpen.setText(_translate("DiceRollerWindow", "Open sheet"))
         self.action_new_sheet.setText(_translate("DiceRollerWindow", "Add Card"))
-        self.actionOpen_in_new_window.setText(_translate("DiceRollerWindow", "Open in new window"))
+        self.actionOpen_in_new_window.setText(
+            _translate("DiceRollerWindow", "Open in new window")
+        )
         self.actionOpen_folder.setText(_translate("DiceRollerWindow", "Open folder"))
         self.action_open_sheet.setText(_translate("DiceRollerWindow", "Sheet"))
         self.action_open_folder.setText(_translate("DiceRollerWindow", "Folder"))
@@ -191,4 +225,6 @@ class Ui_DiceRollerWindow(object):
         self.action_open_stats.setText(_translate("DiceRollerWindow", "Stats"))
         self.action_open_notes_2.setText(_translate("DiceRollerWindow", "Notes"))
         self.action_add_cards.setText(_translate("DiceRollerWindow", "Add Cards"))
-from src.view.HomeSheet import HomeSheet
+
+
+from src.view.HomeSheetWidget import HomeSheetWidget
