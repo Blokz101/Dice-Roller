@@ -39,12 +39,14 @@ class Note(Card):
         """Parses self's text to populate text and inst_list values."""
         # TODO Implement this method
 
-    @staticmethod
-    def from_dict(card_dict: dict[str, Any]) -> Optional[Note]:
+    @classmethod
+    def from_dict(cls, card_dict: dict[str, Any]) -> Optional[Note]:
         if "text" not in card_dict.keys():
             return None
 
-        card: Note = cast(Note, super().from_dict(card_dict))
+        card: Optional[Note] = super().from_dict(card_dict)
+        if card is None:
+            return None
         card.raw_text = card_dict["text"]
         card.parse_raw_text()
 

@@ -1,6 +1,8 @@
 from __future__ import annotations
-from typing import Optional, Any
+from typing import Optional, Any, TypeVar, Type
 from src import CardType
+
+CardT = TypeVar("CardT", bound="Card")
 
 
 class Card:
@@ -31,8 +33,8 @@ class Card:
 
         # Other instance variables
 
-    @staticmethod
-    def from_dict(card_dict: dict[str, Any]) -> Optional[Card]:
+    @classmethod
+    def from_dict(cls: Type[CardT], card_dict: dict[str, Any]) -> Optional[CardT]:
         """
         Creates a Card object from a dict if possible.
         :param card_dict: Dictionary containing card attributes
@@ -41,7 +43,7 @@ class Card:
         if "name" not in card_dict.keys() or "card_type" not in card_dict.keys():
             return None
 
-        card: Card = Card(card_dict["name"], CardType(card_dict["card_type"]))
+        card: Card = cls(card_dict["name"], CardType(card_dict["card_type"]))
         if "column" in card_dict.keys():
             card.column = card_dict["column"]
         if "row" in card_dict.keys():

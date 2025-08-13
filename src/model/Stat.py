@@ -34,14 +34,16 @@ class Stat(Card):
         self.min: Optional[int] = min_value
         """Minimum value of the stat."""
         self.history: list[tuple[str, str]] = []
-        """History of changes to the stat."""
+        """History of changes to the stat. The first str is the description, the second str is the edit."""
 
-    @staticmethod
-    def from_dict(card_dict: dict[str, Any]) -> Optional[Stat]:
+    @classmethod
+    def from_dict(cls, card_dict: dict[str, Any]) -> Optional[Stat]:
         if "value" not in card_dict.keys():
             return None
 
-        card: Stat = cast(Stat, super().from_dict(card_dict))
+        card: Optional[Stat] = super().from_dict(card_dict)
+        if card is None:
+            return None
         card.value = card_dict["value"]
         if "max" in card_dict.keys():
             card.max = card_dict["max"]
@@ -55,9 +57,37 @@ class Stat(Card):
     def to_dict(self) -> dict[str, Any]:
         card_dict: dict[str, Any] = super().to_dict()
         card_dict["value"] = self.value
-        card_dict["history"] = self.history
         if self.max is not None:
             card_dict["max"] = self.max
         if self.min is not None:
             card_dict["min"] = self.min
+        if len(self.history) > 0:
+            card_dict["history"] = self.history
         return card_dict
+
+    def has_history(self) -> bool:
+        """
+        Checks if the stat has a history of changes.
+        :return: True if the stat has a history, False otherwise
+        """
+        return len(self.history) > 0
+
+    def set_value(self, new_value: int) -> None:
+        """
+        Sets the value and discards the history.
+        :param new_value: New value to set for the stat
+        """
+        self.value = new_value
+        self.history = []
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Stat):
+            return False
+
+        return (
+            super().__eq__(other)
+            and self.value == other.value
+            and self.max == other.max
+            and self.min == other.min
+            and self.history == other.history
+        )
