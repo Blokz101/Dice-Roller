@@ -1,32 +1,20 @@
 from __future__ import annotations
-from typing import Optional, Any, cast
-from src import CardType
-from src.model.Card import Card
+from typing import Optional, Any
 from src.model.Instruction import Instruction
 
 
-class Note(Card):
+class Note:
 
     def __init__(
         self,
         name: str,
         raw_text: str = "",
-        column: Optional[int] = None,
-        row: Optional[int] = None,
-        column_span: Optional[int] = None,
-        row_span: Optional[int] = None,
     ):
-        super().__init__(
-            name=name,
-            card_type=CardType.NOTE,
-            column=column,
-            row=row,
-            column_span=column_span,
-            row_span=row_span,
-        )
-
         # Instance variables stored in JSON
+        self.name = name
+        """Name of the note."""
         self.raw_text: str = raw_text
+        """Raw text of the note."""
 
         # Instance variables parsed from raw_text
         self.text: str = ""
@@ -41,18 +29,19 @@ class Note(Card):
 
     @classmethod
     def from_dict(cls, card_dict: dict[str, Any]) -> Optional[Note]:
-        if "text" not in card_dict.keys():
+        if "name" not in card_dict or "text" not in card_dict:
             return None
 
-        card: Optional[Note] = super().base_from_dict(card_dict, CardType.NOTE)
-        if card is None:
-            return None
-        card.raw_text = card_dict["text"]
+        card: Note = Note(name=card_dict["name"], raw_text=card_dict["text"])
         card.parse_raw_text()
 
         return card
 
     def to_dict(self) -> dict[str, Any]:
-        note_dict: dict[str, Any] = super().to_dict()
-        note_dict["text"] = self.raw_text
-        return note_dict
+        return {"name": self.name, "text": self.raw_text}
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Note):
+            return False
+
+        return self.name == other.name and self.raw_text == other.raw_text

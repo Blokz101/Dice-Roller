@@ -8,41 +8,15 @@ class TestNote:
         """Tests that valid dictionaries are converted to Note objects correctly."""
         dicts_list: list[dict[str, Any]] = [
             {"name": "Test Note1", "text": "Simple note text"},
-            {
-                "name": "Test Note2",
-                "text": "Note with column",
-                "column": 5,
-            },
-            {"name": "Test Note3", "text": "Note with row", "row": 3},
-            {"name": "Test Note4", "text": "", "column_span": 2},
-            {
-                "name": "Test Note5",
-                "text": "Multi-line\nnote text",
-                "row_span": 4,
-            },
-            {
-                "name": "Test Note6",
-                "text": "Complete note with all fields",
-                "column": 1,
-                "row": 2,
-                "column_span": 3,
-                "row_span": 2,
-            },
+            {"name": "Test Note2", "text": ""},
+            {"name": "Test Note3", "text": "Multi-line\nnote text"},
+            {"name": "Test Note4", "text": "Note with special chars: !@#$%^&*()"},
         ]
         expected_note_list: list[Note] = [
             Note(name="Test Note1", raw_text="Simple note text"),
-            Note(name="Test Note2", raw_text="Note with column", column=5),
-            Note(name="Test Note3", raw_text="Note with row", row=3),
-            Note(name="Test Note4", raw_text="", column_span=2),
-            Note(name="Test Note5", raw_text="Multi-line\nnote text", row_span=4),
-            Note(
-                name="Test Note6",
-                raw_text="Complete note with all fields",
-                column=1,
-                row=2,
-                column_span=3,
-                row_span=2,
-            ),
+            Note(name="Test Note2", raw_text=""),
+            Note(name="Test Note3", raw_text="Multi-line\nnote text"),
+            Note(name="Test Note4", raw_text="Note with special chars: !@#$%^&*()"),
         ]
 
         for note_dict, expected_note in zip(dicts_list, expected_note_list):
@@ -54,6 +28,7 @@ class TestNote:
         invalid_dict_list: list[dict[str, Any]] = [
             {},  # Missing required name and text
             {"name": "Invalid Note1"},  # Missing required text
+            {"text": "Some text"},  # Missing required name
         ]
 
         for invalid_dict in invalid_dict_list:
@@ -63,41 +38,15 @@ class TestNote:
         """Tests that Note objects are converted to dictionaries correctly."""
         expected_dict_list: list[dict[str, Any]] = [
             {"name": "Test Note1", "text": "Simple note text"},
-            {
-                "name": "Test Note2",
-                "text": "Note with column",
-                "column": 5,
-            },
-            {"name": "Test Note3", "text": "Note with row", "row": 3},
-            {"name": "Test Note4", "text": "", "column_span": 2},
-            {
-                "name": "Test Note5",
-                "text": "Multi-line\nnote text",
-                "row_span": 4,
-            },
-            {
-                "name": "Test Note6",
-                "text": "Complete note with all fields",
-                "column": 1,
-                "row": 2,
-                "column_span": 3,
-                "row_span": 2,
-            },
+            {"name": "Test Note2", "text": ""},
+            {"name": "Test Note3", "text": "Multi-line\nnote text"},
+            {"name": "Test Note4", "text": "Note with special chars: !@#$%^&*()"},
         ]
         note_list: list[Note] = [
             Note(name="Test Note1", raw_text="Simple note text"),
-            Note(name="Test Note2", raw_text="Note with column", column=5),
-            Note(name="Test Note3", raw_text="Note with row", row=3),
-            Note(name="Test Note4", raw_text="", column_span=2),
-            Note(name="Test Note5", raw_text="Multi-line\nnote text", row_span=4),
-            Note(
-                name="Test Note6",
-                raw_text="Complete note with all fields",
-                column=1,
-                row=2,
-                column_span=3,
-                row_span=2,
-            ),
+            Note(name="Test Note2", raw_text=""),
+            Note(name="Test Note3", raw_text="Multi-line\nnote text"),
+            Note(name="Test Note4", raw_text="Note with special chars: !@#$%^&*()"),
         ]
 
         for expected_dict, note in zip(expected_dict_list, note_list):

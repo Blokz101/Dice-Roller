@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1287</width>
+    <width>1288</width>
     <height>691</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Marcus's Dice Roller</string>
+   <string>MainWindow</string>
   </property>
-  <widget class="QWidget" name="centralwidget">
+  <widget class="QWidget" name="container_widget">
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
      <widget class="QTabWidget" name="sheet_tab_widget">
@@ -44,7 +44,7 @@
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
-         <widget class="HomeSheet" name="homes_sheet" native="true">
+         <widget class="HomeSheetWidget" name="home_sheet" native="true">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
@@ -119,7 +119,7 @@
            </spacer>
           </item>
           <item>
-           <widget class="QTextBrowser" name="cmd_terminal">
+           <widget class="QTextBrowser" name="console">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
               <horstretch>0</horstretch>
@@ -129,7 +129,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="cmd_input">
+           <widget class="QLineEdit" name="console_input">
             <property name="styleSheet">
              <string notr="true"/>
             </property>
@@ -143,133 +143,51 @@
     </item>
    </layout>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1287</width>
+     <width>1288</width>
      <height>17</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuSheet">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="action_open_sheet"/>
+    <addaction name="action_save_sheet"/>
+    <addaction name="action_new_sheet"/>
+   </widget>
+   <widget class="QMenu" name="menuCard">
+    <property name="title">
+     <string>Sheet</string>
+    </property>
+    <addaction name="action_launch_stats_editor"/>
+    <addaction name="action_launch_notes_editor"/>
+    <addaction name="action_add_stat_card"/>
+    <addaction name="action_add_note_card"/>
+   </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
      <string>Help</string>
     </property>
     <addaction name="action_open_readme"/>
    </widget>
-   <widget class="QMenu" name="menuWindow">
-    <property name="title">
-     <string>Window</string>
-    </property>
-    <addaction name="action_move_window_to_new"/>
-    <addaction name="action_show_home_sheet"/>
-   </widget>
-   <widget class="QMenu" name="menuSheet">
-    <property name="title">
-     <string>Sheet</string>
-    </property>
-    <addaction name="action_open_sheet_3"/>
-    <addaction name="action_new_sheet_3"/>
-    <addaction name="action_save_sheet_2"/>
-   </widget>
-   <widget class="QMenu" name="menuCard">
-    <property name="title">
-     <string>Cards</string>
-    </property>
-    <addaction name="action_open_stats"/>
-    <addaction name="action_open_notes_2"/>
-    <addaction name="action_add_cards"/>
-   </widget>
    <addaction name="menuSheet"/>
    <addaction name="menuCard"/>
-   <addaction name="menuWindow"/>
    <addaction name="menuHelp"/>
   </widget>
+  <widget class="QStatusBar" name="statusbar"/>
   <action name="action_open_readme">
    <property name="text">
     <string>README</string>
    </property>
   </action>
-  <action name="actionHome_Tab">
-   <property name="text">
-    <string>Show Home sheet</string>
-   </property>
-  </action>
-  <action name="actionOpen_current_sheet_in_new_window">
-   <property name="text">
-    <string>Open current sheet in new window</string>
-   </property>
-  </action>
-  <action name="action_move_window_to_new">
-   <property name="text">
-    <string>Move current sheet to new window</string>
-   </property>
-  </action>
-  <action name="action_show_home_sheet">
-   <property name="text">
-    <string>Show home sheet</string>
-   </property>
-  </action>
-  <action name="actionOpen">
-   <property name="text">
-    <string>Open sheet</string>
-   </property>
-  </action>
-  <action name="action_new_sheet">
-   <property name="text">
-    <string>Add Card</string>
-   </property>
-  </action>
-  <action name="actionOpen_in_new_window">
-   <property name="text">
-    <string>Open in new window</string>
-   </property>
-  </action>
-  <action name="actionOpen_folder">
-   <property name="text">
-    <string>Open folder</string>
-   </property>
-  </action>
   <action name="action_open_sheet">
    <property name="text">
-    <string>Sheet</string>
-   </property>
-  </action>
-  <action name="action_open_folder">
-   <property name="text">
-    <string>Folder</string>
-   </property>
-  </action>
-  <action name="actionValues">
-   <property name="text">
-    <string>Values</string>
-   </property>
-  </action>
-  <action name="actionNotes">
-   <property name="text">
-    <string>Notes</string>
-   </property>
-  </action>
-  <action name="action_new_sheet_2">
-   <property name="text">
-    <string>New Sheet</string>
-   </property>
-  </action>
-  <action name="action_open_sheet_2">
-   <property name="text">
     <string>Open Sheet</string>
-   </property>
-  </action>
-  <action name="action_open_values">
-   <property name="text">
-    <string>Values</string>
-   </property>
-  </action>
-  <action name="action_open_notes">
-   <property name="text">
-    <string>Notes</string>
    </property>
   </action>
   <action name="action_save_sheet">
@@ -277,47 +195,37 @@
     <string>Save Sheet</string>
    </property>
   </action>
-  <action name="action_add_card">
-   <property name="text">
-    <string>Add Card</string>
-   </property>
-  </action>
-  <action name="action_open_sheet_3">
-   <property name="text">
-    <string>Open Sheet</string>
-   </property>
-  </action>
-  <action name="action_new_sheet_3">
+  <action name="action_new_sheet">
    <property name="text">
     <string>New Sheet</string>
    </property>
   </action>
-  <action name="action_save_sheet_2">
+  <action name="action_launch_stats_editor">
    <property name="text">
-    <string>Save Sheet</string>
+    <string>Stats Editor</string>
    </property>
   </action>
-  <action name="action_open_stats">
+  <action name="action_launch_notes_editor">
    <property name="text">
-    <string>Stats</string>
+    <string>Notes Editor</string>
    </property>
   </action>
-  <action name="action_open_notes_2">
+  <action name="action_add_stat_card">
    <property name="text">
-    <string>Notes</string>
+    <string>Add Stat Card</string>
    </property>
   </action>
-  <action name="action_add_cards">
+  <action name="action_add_note_card">
    <property name="text">
-    <string>Add Cards</string>
+    <string>Add Note Card</string>
    </property>
   </action>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>HomeSheet</class>
+   <class>HomeSheetWidget</class>
    <extends>QWidget</extends>
-   <header>src.view.HomeSheet</header>
+   <header>src.view.HomeSheetWidget</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

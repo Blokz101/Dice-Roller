@@ -1,0 +1,52 @@
+{
+    "name": "Tim the Schizophrenic Assassin",
+    "stats": [
+        {"name": "Strength", "value": 10, "history": [["Initial", "10"], ["Level One", "11"]]},
+        {"name": "Dexterity", "value" : 19, "history": [["Initial", "10"], ["Level Two", "19"]]},
+        {"name": "Constitution", "value": 13, "history": [["Initial", "10"], ["Level One", "13"]]},
+        {"name": "Intelligence", "value": 17, "history": [["Initial", "10"], ["Level One", "17"]]},
+        {"name": "Wisdom", "value": 11, "history": [["Initial", "10"], ["Level One", "11"]]},
+        {"name": "Charisma", "value": 9, "history": [["Initial", "10"], ["Level One", "9"]]},
+        {"name": "Arrows", "value": 45}
+    ],
+    "notes": [
+        {"name": "FIREBALL", "text": "Casting Time: 1 action\\nRange: 150 feet\\nComponents: V, S, M (a tiny ball of bat guano and sulfur)\\nDuration: Instantaneous\\n\\nA bright streak flashes from your pointing finger to a point you choose within range then blossoms with a low roar into an explosion of flame. Each creature in a 20-foot radius must make a Dexterity saving throw. A target takes 8d6 fire damage on a failed save, or half as much damage on a successful one. The fire spreads around corners. It ignites flammable objects in the area that aren't being worn or carried.\\n\\nAt Higher Levels. When you cast this spell using a spell slot of 4th level or higher, the damage increases by 1d6 for each slot level above 3rd.\\n\\nSpell Lists. Sorcerer, Wizard"}
+    ],
+    "cards": [
+        {
+            "name": "Core Stats",
+            "card_type": 0,
+            "column": 0,
+            "row": 0,
+            "stat_names": [
+                "Strength",
+                "Dexterity",
+                "Constitution",
+                "Intelligence",
+                "Wisdom",
+                "Charisma"
+            ],
+            "stat_configs": {
+                "Strength": {"subtext": "+0"},
+                "Dexterity": {"subtext": "+4"},
+                "Constitution": {"subtext": "+1"},
+                "Intelligence": {"subtext": "+3"},
+                "Wisdom": {"subtext": "+0"},
+                "Charisma": {"subtext": "-1"}
+            }
+        },
+        {
+            "name": "Ammunition",
+            "card_type": 0,
+            "column": 0,
+            "row": 1,
+            "stat_names": ["Arrows"],
+            "stat_configs": {
+                "Arrows": {
+                    "show_max": true,
+                    "show_min": true
+                }
+            }
+        }
+    ]
+}

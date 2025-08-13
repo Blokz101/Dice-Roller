@@ -1,33 +1,20 @@
 from __future__ import annotations
-from typing import Optional, Any, cast
-from src.model.Card import Card
-from src import CardType
+from typing import Optional, Any
 
 
-class Stat(Card):
+class Stat:
 
     def __init__(
         self,
         name: str,
-        initial_value: int = 0,
+        value: int = 0,
         max_value: Optional[int] = None,
         min_value: Optional[int] = None,
-        column: Optional[int] = None,
-        row: Optional[int] = None,
-        column_span: Optional[int] = None,
-        row_span: Optional[int] = None,
     ):
-        super().__init__(
-            name=name,
-            card_type=CardType.STAT,
-            column=column,
-            row=row,
-            column_span=column_span,
-            row_span=row_span,
-        )
-
         # Instance variables stored in the JSON
-        self.value: int = initial_value
+        self.name: str = name
+        """Name of the stat."""
+        self.value: int = value
         """Current value of the stat."""
         self.max: Optional[int] = max_value
         """Maximum value of the stat."""
@@ -38,25 +25,24 @@ class Stat(Card):
 
     @classmethod
     def from_dict(cls, card_dict: dict[str, Any]) -> Optional[Stat]:
-        if "value" not in card_dict.keys():
+        if not all(required_attr in card_dict for required_attr in ["name", "value"]):
             return None
 
-        card: Optional[Stat] = super().base_from_dict(card_dict, CardType.STAT)
-        if card is None:
-            return None
-        card.value = card_dict["value"]
-        if "max" in card_dict.keys():
+        card: Stat = Stat(card_dict["name"], card_dict["value"])
+        if "max" in card_dict:
             card.max = card_dict["max"]
-        if "min" in card_dict.keys():
+        if "min" in card_dict:
             card.min = card_dict["min"]
-        if "history" in card_dict.keys():
-            card.history = card_dict["history"]
+        if "history" in card_dict:
+            for entry in card_dict["history"]:
+                if not isinstance(entry, list) and not len(entry) == 2:
+                    return None
+                card.history.append((entry[0], entry[1]))
 
         return card
 
     def to_dict(self) -> dict[str, Any]:
-        card_dict: dict[str, Any] = super().to_dict()
-        card_dict["value"] = self.value
+        card_dict: dict[str, Any] = {"name": self.name, "value": self.value}
         if self.max is not None:
             card_dict["max"] = self.max
         if self.min is not None:
@@ -85,7 +71,7 @@ class Stat(Card):
             return False
 
         return (
-            super().__eq__(other)
+            self.name == other.name
             and self.value == other.value
             and self.max == other.max
             and self.min == other.min

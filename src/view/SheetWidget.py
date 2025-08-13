@@ -9,16 +9,17 @@ from PyQt6.QtGui import (
 )
 from src import GRID_SIZE, SHEET_CARD_WIDTH, SHEET_CARD_HEIGHT
 from src.view.CardWidget import CardWidget
+from src.model.Sheet import Sheet
 
 
 class SheetWidget(QScrollArea):
 
-    def __init__(self, parent: Optional[QWidget] = None):
+    def __init__(self, sheet: Sheet, parent: Optional[QWidget] = None):
         super().__init__(parent)
 
         # Instance variables
-        self.cards_list: list[CardWidget] = []
-        """List of cards this sheet has"""
+        self.sheet: Sheet = sheet
+        """Sheet model instance."""
         self.container_widget: QWidget
         """Container widget that holds the grid layout."""
         self.grid_layout: QGridLayout
