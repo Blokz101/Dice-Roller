@@ -1,7 +1,9 @@
 from enum import Enum
 
 
-class CardType:
+class CardType(Enum):
+    """Type of card. Either Stat card or Note card."""
+
     STAT = 0
     NOTE = 1
 
