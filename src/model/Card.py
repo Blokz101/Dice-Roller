@@ -160,6 +160,16 @@ class Card:
 
         return card_dict
 
+    def config_for_stat(self, stat_name: str) -> Optional[StatConfig]:
+        """
+        Returns the config for a stat on this card.
+        :param stat_name: Name of the stat to get the config for
+        :return: StatConfig object or None if the stat is not present
+        """
+        if self.stat_configs is None:
+            return None
+        return self.stat_configs.get(stat_name, None)
+
     def __eq__(self, obj: object) -> bool:
         if not isinstance(obj, Card):
             return False
