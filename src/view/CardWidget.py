@@ -1,52 +1,60 @@
-from typing import Optional
-from dataclasses import dataclass
-from PyQt6.QtWidgets import QScrollArea, QWidget, QGridLayout, QPushButton
-from PyQt6.QtCore import QSize, QObject, Qt, QMimeData, QRect
+from typing import Optional, Self
+from abc import ABC, abstractmethod
+from PyQt6.QtWidgets import QWidget
+from PyQt6.QtCore import Qt, QMimeData, QRect
 from PyQt6.QtGui import (
-    QDropEvent,
     QMouseEvent,
     QDrag,
     QPixmap,
-    QDragEnterEvent,
-    QDragMoveEvent,
 )
-from src import GRID_SIZE
+from src.model.Card import Card
+from src.model.Stat import Stat
+from src.model.Note import Note
 
 
 class CardWidget(QWidget):
 
     def __init__(
         self,
+        card: Card,
         parent: Optional[QWidget] = None,
     ):
         super().__init__(parent)
 
-        self.loc: Optional[QRect] = None
+        # Model related instance vars
+        self.card: Card = card
+        """Card model instance."""
+
+        # GUI related instance vars
+        self.loc: QRect = QRect(
+            self.card.column, self.card.row, self.cells_width(), self.cells_height()
+        )
         """Location of this card on a sheet."""
+
+    @classmethod
+    def from_card(cls, card: Card, data_list: list[Stat | Note]) -> Self:
+        """
+        Creates a CardWidget from a Card model instance.
+        :param card: Card model instance
+        :returns: CardWidget instance
+        """
+        raise NotImplementedError
 
     def cells_width(self) -> int:
         """
         Gets the width of this card in grid cells.
         :returns: Width of this card in grid cells
         """
-        hinted_size: QSize = super().sizeHint()
-
-        if hinted_size.width() % GRID_SIZE == 0:
-            return hinted_size // GRID_SIZE
-        return hinted_size.width() // GRID_SIZE + 1
+        raise NotImplementedError()
 
     def cells_height(self) -> int:
         """
         Gets the height of this card in grid cells.
         :returns: Height of this card in grid cells
         """
-        hinted_size: QSize = super().sizeHint()
+        raise NotImplementedError()
 
-        if hinted_size.height() % GRID_SIZE == 0:
-            return hinted_size // GRID_SIZE
-        return hinted_size.height() // GRID_SIZE + 1
-
-    def set_location(self, column: int, row: int) -> None:
+    def set_loc(self, column: int, row: int) -> None:
         """
         Sets this cards rectangle in the grid layout. Uses indexes.
         :param column: Top left column index

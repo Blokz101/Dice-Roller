@@ -7,8 +7,10 @@ from PyQt6.QtGui import (
     QDragLeaveEvent,
     QDragMoveEvent,
 )
-from src import GRID_SIZE, SHEET_CARD_WIDTH, SHEET_CARD_HEIGHT
+from src import GRID_SIZE, SHEET_CARD_WIDTH, SHEET_CARD_HEIGHT, CardType
 from src.view.CardWidget import CardWidget
+from src.view.StatWidget import StatWidget
+from src.view.NoteWidget import NoteWidget
 from src.model.Sheet import Sheet
 
 
@@ -17,9 +19,13 @@ class SheetWidget(QScrollArea):
     def __init__(self, sheet: Sheet, parent: Optional[QWidget] = None):
         super().__init__(parent)
 
-        # Instance variables
+        # Model related instance vars
         self.sheet: Sheet = sheet
         """Sheet model instance."""
+
+        # GUI related instance vars
+        self.card_widget_list: list[CardWidget] = []
+        """List of card widgets in the sheet."""
         self.container_widget: QWidget
         """Container widget that holds the grid layout."""
         self.grid_layout: QGridLayout
@@ -27,7 +33,11 @@ class SheetWidget(QScrollArea):
         self.preview_widget: QWidget = QWidget()
         """Widget that is shown as a preview of drop during drag-and-drop operations."""
 
-        # Generate blank sheet grid
+        self._setup_grid()
+        self.populate_from_sheet()
+
+    def _setup_grid(self) -> None:
+        """Creates the grid and configures the layout."""
         self.container_widget = QWidget()
         self.grid_layout = QGridLayout()
 
@@ -52,6 +62,14 @@ class SheetWidget(QScrollArea):
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Preferred)
 
+    def populate_from_sheet(self) -> None:
+        """Adds all card widgets in the sheet to the grid layout."""
+        for card in self.sheet.card_list:
+            if card.card_type == CardType.STAT:
+                self.add_card(StatWidget.from_card(card, self.sheet.stat_list))
+            else:
+                self.add_card(NoteWidget.from_card(card, self.sheet.note_list))
+
     def sizeHint(self) -> QSize:
         """
         Returns the size of the container widget and grid layout.
@@ -74,15 +92,17 @@ class SheetWidget(QScrollArea):
             )
             return contents_size
 
+        return super().sizeHint()
+
     def dragEnterEvent(self, e: QDragEnterEvent) -> None:
         """
         Called by Qt when a drag operation enters the sheet widget.
         :param e: Event that contains drag info
         """
-        widget: Optional[QObject] = e.source()
-        if widget is None or not isinstance(widget, CardWidget):
+        card: Optional[QObject] = e.source()
+        if card is None or not isinstance(card, CardWidget):
             return
-        card: CardWidget = cast(CardWidget, widget)
+
         size: QSize = QSize()
         size.setHeight(
             card.cells_height() * GRID_SIZE
@@ -104,10 +124,9 @@ class SheetWidget(QScrollArea):
         Called by Qt when a the mouse is moved while performing a drag operation.
         :param e: Event that contains drag info
         """
-        widget: Optional[QObject] = e.source()
-        if widget is None or not isinstance(widget, CardWidget):
+        card: Optional[QObject] = e.source()
+        if card is None or not isinstance(card, CardWidget):
             return
-        card: CardWidget = cast(CardWidget, widget)
 
         grid_idx: Optional[tuple[int, int]]
         grid_idx = self.pos_to_grid_idx(e.position().toPoint())
@@ -127,18 +146,25 @@ class SheetWidget(QScrollArea):
         Called by Qt when the drag operation is completed with a drop.
         :param e: Event that contains drag info
         """
-        widget: Optional[QObject] = e.source()
-        if widget is None or not isinstance(widget, CardWidget):
-            return
-        card: CardWidget = cast(CardWidget, widget)
 
+        # Type check the card and get the grid index
+        card: Optional[QObject] = e.source()
+        if card is None or not isinstance(card, CardWidget):
+            return
         grid_idx: Optional[tuple[int, int]]
         grid_idx = self.pos_to_grid_idx(e.position().toPoint())
         if not grid_idx:
             return
-        if self.cells_free(card, *grid_idx):
+        column: int
+        row: int
+        column, row = grid_idx
+
+        if self.cells_free(card, column, row):
             self.preview_widget.hide()
-            self.add_card(card, *grid_idx)
+            self.sheet.saved_to_file = False
+            card.card.column = column
+            card.card.row = row
+            self.add_card(card)
             e.accept()
             return
 
@@ -169,7 +195,7 @@ class SheetWidget(QScrollArea):
             column, row, new_card.cells_width(), new_card.cells_height()
         )
 
-        for card in self.cards_list:
+        for card in self.card_widget_list:
             if card is new_card:
                 continue
             if card.loc.intersects(new_space):
@@ -177,27 +203,25 @@ class SheetWidget(QScrollArea):
 
         return True
 
-    def add_card(self, card: CardWidget, column: int, row: int) -> bool:
+    def add_card(self, card: CardWidget) -> bool:
         """
         Adds a card to the sheet.
-        :param column: Column index to add card at
-        :param row: Row index to add card at
         :returns: Returns true if the card was placed successfully, false otherwise
         """
 
         # Requested location is not free
-        if not self.cells_free(card, column, row):
+        if not self.cells_free(card, card.card.column, card.card.row):
             return False
 
         # Add card
         self.grid_layout.addWidget(
             card,
-            row,
-            column,
+            card.card.row,
+            card.card.column,
             card.cells_height(),
             card.cells_width(),
         )
-        card.set_location(column, row)
-        if not card in self.cards_list:
-            self.cards_list.append(card)
+        card.set_loc(card.card.column, card.card.row)
+        if card not in self.card_widget_list:
+            self.card_widget_list.append(card)
         return True

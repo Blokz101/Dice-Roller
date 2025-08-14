@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Any, Optional
+from typing import Any, Optional, Callable
 import json
 from pathlib import Path
 from src.model.Card import Card
@@ -12,10 +12,12 @@ class Sheet:
 
     def __init__(
         self,
+        name: str = "New Sheet",
         stat_list: Optional[list[Stat]] = None,
         note_list: Optional[list[Note]] = None,
         card_list: Optional[list[Card]] = None,
     ):
+        self.name: str = name
         self.stat_list: list[Stat] = stat_list if stat_list is not None else []
         """List of Stat data objects."""
         self.note_list: list[Note] = note_list if note_list is not None else []
@@ -52,21 +54,34 @@ class Sheet:
         """
 
         # Ensure the dict has the required keys
-        if not all(table in sheet_dict for table in ["stats", "notes", "cards"]):
+        if not all(
+            table in sheet_dict for table in ["name", "stats", "notes", "cards"]
+        ):
             raise ValueError("Input dict is missing required keys.")
 
         # Ensure the required dict keys can be parsed
         if (
-            not isinstance(sheet_dict["stats"], list)
+            not isinstance(sheet_dict["name"], str)
+            or not isinstance(sheet_dict["stats"], list)
             or not isinstance(sheet_dict["notes"], list)
             or not isinstance(sheet_dict["cards"], list)
         ):
             raise ValueError("Input dict has incorrect types for keys.")
 
+        non_none_filter: Callable[[list[Any]], list[Any]] = lambda x: [
+            item for item in x if item is not None
+        ]
         return Sheet(
-            stat_list=[Stat.from_dict(stat_data) for stat_data in sheet_dict["stats"]],
-            note_list=[Note.from_dict(note_data) for note_data in sheet_dict["notes"]],
-            card_list=[Card.from_dict(card_data) for card_data in sheet_dict["cards"]],
+            name=sheet_dict["name"],
+            stat_list=non_none_filter(
+                [Stat.from_dict(stat_data) for stat_data in sheet_dict["stats"]]
+            ),
+            note_list=non_none_filter(
+                [Note.from_dict(note_data) for note_data in sheet_dict["notes"]]
+            ),
+            card_list=non_none_filter(
+                [Card.from_dict(card_data) for card_data in sheet_dict["cards"]]
+            ),
         )
 
     def to_dict(self) -> dict[str, Any]:
@@ -75,6 +90,7 @@ class Sheet:
         :return: Dict containing sheet values
         """
         return {
+            "name": self.name,
             "stats": [stat.to_dict() for stat in self.stat_list],
             "notes": [note.to_dict() for note in self.note_list],
             "cards": [card.to_dict() for card in self.card_list],
@@ -92,7 +108,8 @@ class Sheet:
         if not isinstance(other, Sheet):
             return NotImplemented
         return (
-            self.stat_list == other.stat_list
+            self.name == other.name
+            and self.stat_list == other.stat_list
             and self.note_list == other.note_list
             and self.card_list == other.card_list
         )

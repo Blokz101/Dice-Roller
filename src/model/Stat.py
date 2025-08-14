@@ -34,10 +34,11 @@ class Stat:
         if "min" in card_dict:
             card.min = card_dict["min"]
         if "history" in card_dict:
+            entry: Any
             for entry in card_dict["history"]:
-                if not isinstance(entry, list) and not len(entry) == 2:
+                if not isinstance(entry, list) or not len(entry) == 2:  # type: ignore
                     return None
-                card.history.append((entry[0], entry[1]))
+                card.history.append((entry[0], entry[1]))  # type: ignore
 
         return card
 

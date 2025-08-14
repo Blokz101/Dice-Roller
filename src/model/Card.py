@@ -23,7 +23,7 @@ class StatConfig:
         )
 
     def to_dict(self) -> dict[str, Any]:
-        config_dict: dict = {}
+        config_dict: dict[str, Any] = {}
         if self.show_max is not None:
             config_dict["show_max"] = self.show_max
         if self.show_min is not None:
@@ -52,7 +52,7 @@ class Card:
     ):
 
         # Instance variables stored in the JSON
-        self.name: int = name
+        self.name: str = name
         """Name of the card."""
         self.card_type: CardType = card_type
         """Type of the card."""
@@ -112,8 +112,8 @@ class Card:
             card.stat_names = card_dict["stat_names"]
             if "stat_configs" in card_dict:
                 card.stat_configs = {
-                    stat_name: StatConfig.from_dict(stat_config)
-                    for stat_name, stat_config in card_dict["stat_configs"].items()
+                    stat_name: StatConfig.from_dict(stat_config)  # type: ignore
+                    for stat_name, stat_config in card_dict["stat_configs"].items()  # type: ignore
                 }
 
         # If this card is a note card, ensure required attrs are present and set them

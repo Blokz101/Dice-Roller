@@ -73,7 +73,10 @@ class TestSheet:
         ]
 
         expected_sheet: Sheet = Sheet(
-            stat_list=expected_stats, note_list=expected_notes, card_list=expected_cards
+            name="Tim the Schizophrenic Assassin",
+            stat_list=expected_stats,
+            note_list=expected_notes,
+            card_list=expected_cards,
         )
         actual_sheet: Sheet = Sheet.from_json(SAMPLE1_JSON_PATH)
 
@@ -141,9 +144,15 @@ class TestSheet:
             ),
         ]
 
-        sheet: Sheet = Sheet(stat_list=stats, note_list=notes, card_list=cards)
+        sheet: Sheet = Sheet(
+            name="Tim the Schizophrenic Assassin",
+            stat_list=stats,
+            note_list=notes,
+            card_list=cards,
+        )
 
         expected_dict: dict[str, Any] = {
+            "name": "Tim the Schizophrenic Assassin",
             "stats": [
                 {
                     "name": "Strength",
@@ -218,3 +227,64 @@ class TestSheet:
         }
 
         assert expected_dict == sheet.to_dict()
+
+    def test_sheet_name_default(self) -> None:
+        """Test that a Sheet gets a default name when none is provided."""
+        sheet = Sheet()
+        assert sheet.name == "New Sheet"
+
+    def test_sheet_name_assignment(self) -> None:
+        """Test that a Sheet can be created with a custom name."""
+        custom_name = "My Custom Sheet"
+        sheet = Sheet(name=custom_name)
+        assert sheet.name == custom_name
+
+    def test_sheet_name_in_to_dict(self) -> None:
+        """Test that the name is included in the to_dict output."""
+        custom_name = "Test Sheet Name"
+        sheet = Sheet(name=custom_name)
+        result = sheet.to_dict()
+        assert "name" in result
+        assert result["name"] == custom_name
+
+    def test_sheet_name_from_dict(self) -> None:
+        """Test that from_dict correctly parses the name field."""
+        test_data = {
+            "name": "Test Character Sheet",
+            "stats": [],
+            "notes": [],
+            "cards": [],
+        }
+        sheet = Sheet.from_dict(test_data)
+        assert sheet.name == "Test Character Sheet"
+
+    def test_from_dict_missing_name_raises_error(self) -> None:
+        """Test that from_dict raises an error when name is missing."""
+        test_data = {"stats": [], "notes": [], "cards": []}
+        with pytest.raises(ValueError, match="Input dict is missing required keys"):
+            Sheet.from_dict(test_data)
+
+    def test_from_dict_invalid_name_type_raises_error(self) -> None:
+        """Test that from_dict raises an error when name is not a string."""
+        test_data = {
+            "name": 123,  # Should be string, not int
+            "stats": [],
+            "notes": [],
+            "cards": [],
+        }
+        with pytest.raises(ValueError, match="Input dict has incorrect types for keys"):
+            Sheet.from_dict(test_data)
+
+    def test_sheet_equality_with_different_names(self) -> None:
+        """Test that sheets with different names but identical content are not equal."""
+        stats = [Stat(name="Test Stat", value=10)]
+        sheet1 = Sheet(name="Sheet 1", stat_list=stats)
+        sheet2 = Sheet(name="Sheet 2", stat_list=stats)
+        assert sheet1 != sheet2
+
+    def test_sheet_equality_with_same_names(self) -> None:
+        """Test that sheets with same names and identical content are equal."""
+        stats = [Stat(name="Test Stat", value=10)]
+        sheet1 = Sheet(name="Same Name", stat_list=stats)
+        sheet2 = Sheet(name="Same Name", stat_list=stats)
+        assert sheet1 == sheet2
