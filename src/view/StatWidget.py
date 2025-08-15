@@ -22,10 +22,9 @@ class _SingleStatWidget(QWidget):
         self.subtext_label: QLabel
         self.name_label: QLabel
 
-        self._build_main_labels()
+        self.build_new_layout()
 
-    def _build_main_labels(self):
-
+    def build_new_layout(self):
         layout = QVBoxLayout()
         self.value_label = QLabel(
             str(self.stat.value)

@@ -34,7 +34,7 @@ class TestSheet:
         expected_notes = [
             Note(
                 name="FIREBALL",
-                raw_text="Casting Time: 1 action\\nRange: 150 feet\\nComponents: V, S, M (a tiny ball of bat guano and sulfur)\\nDuration: Instantaneous\\n\\nA bright streak flashes from your pointing finger to a point you choose within range then blossoms with a low roar into an explosion of flame. Each creature in a 20-foot radius must make a Dexterity saving throw. A target takes 8d6 fire damage on a failed save, or half as much damage on a successful one. The fire spreads around corners. It ignites flammable objects in the area that aren't being worn or carried.\\n\\nAt Higher Levels. When you cast this spell using a spell slot of 4th level or higher, the damage increases by 1d6 for each slot level above 3rd.\\n\\nSpell Lists. Sorcerer, Wizard",
+                raw_text="Casting Time: 1 action\nRange: 150 feet\nComponents: V, S, M (a tiny ball of bat guano and sulfur)\nDuration: Instantaneous\n\nA bright streak flashes from your pointing finger to a point you choose within range then blossoms with a low roar into an explosion of flame. Each creature in a 20-foot radius must make a Dexterity saving throw. A target takes 8d6 fire damage on a failed save, or half as much damage on a successful one. The fire spreads around corners. It ignites flammable objects in the area that aren't being worn or carried.\n\nAt Higher Levels. When you cast this spell using a spell slot of 4th level or higher, the damage increases by 1d6 for each slot level above 3rd.\n\nSpell Lists. Sorcerer, Wizard",
             )
         ]
 
@@ -69,6 +69,15 @@ class TestSheet:
                 row=1,
                 stat_names=["Arrows"],
                 stat_configs={"Arrows": StatConfig(show_max=True, show_min=True)},
+            ),
+            Card(
+                name="FIREBALLL",
+                card_type=CardType.NOTE,
+                column=2,
+                row=2,
+                column_span=3,
+                row_span=2,
+                note_name="FIREBALL",
             ),
         ]
 
@@ -106,7 +115,7 @@ class TestSheet:
         notes = [
             Note(
                 name="FIREBALL",
-                raw_text="Casting Time: 1 action\\nRange: 150 feet\\nComponents: V, S, M (a tiny ball of bat guano and sulfur)\\nDuration: Instantaneous\\n\\nA bright streak flashes from your pointing finger to a point you choose within range then blossoms with a low roar into an explosion of flame. Each creature in a 20-foot radius must make a Dexterity saving throw. A target takes 8d6 fire damage on a failed save, or half as much damage on a successful one. The fire spreads around corners. It ignites flammable objects in the area that aren't being worn or carried.\\n\\nAt Higher Levels. When you cast this spell using a spell slot of 4th level or higher, the damage increases by 1d6 for each slot level above 3rd.\\n\\nSpell Lists. Sorcerer, Wizard",
+                raw_text="Casting Time: 1 action\nRange: 150 feet\nComponents: V, S, M (a tiny ball of bat guano and sulfur)\nDuration: Instantaneous\n\nA bright streak flashes from your pointing finger to a point you choose within range then blossoms with a low roar into an explosion of flame. Each creature in a 20-foot radius must make a Dexterity saving throw. A target takes 8d6 fire damage on a failed save, or half as much damage on a successful one. The fire spreads around corners. It ignites flammable objects in the area that aren't being worn or carried.\n\nAt Higher Levels. When you cast this spell using a spell slot of 4th level or higher, the damage increases by 1d6 for each slot level above 3rd.\n\nSpell Lists. Sorcerer, Wizard",
             )
         ]
 
@@ -141,6 +150,15 @@ class TestSheet:
                 row=1,
                 stat_names=["Arrows"],
                 stat_configs={"Arrows": StatConfig(show_max=True, show_min=True)},
+            ),
+            Card(
+                name="FIREBALLL",
+                card_type=CardType.NOTE,
+                column=2,
+                row=2,
+                column_span=3,
+                row_span=2,
+                note_name="FIREBALL",
             ),
         ]
 
@@ -189,7 +207,7 @@ class TestSheet:
             "notes": [
                 {
                     "name": "FIREBALL",
-                    "text": "Casting Time: 1 action\\nRange: 150 feet\\nComponents: V, S, M (a tiny ball of bat guano and sulfur)\\nDuration: Instantaneous\\n\\nA bright streak flashes from your pointing finger to a point you choose within range then blossoms with a low roar into an explosion of flame. Each creature in a 20-foot radius must make a Dexterity saving throw. A target takes 8d6 fire damage on a failed save, or half as much damage on a successful one. The fire spreads around corners. It ignites flammable objects in the area that aren't being worn or carried.\\n\\nAt Higher Levels. When you cast this spell using a spell slot of 4th level or higher, the damage increases by 1d6 for each slot level above 3rd.\\n\\nSpell Lists. Sorcerer, Wizard",
+                    "text": "Casting Time: 1 action\nRange: 150 feet\nComponents: V, S, M (a tiny ball of bat guano and sulfur)\nDuration: Instantaneous\n\nA bright streak flashes from your pointing finger to a point you choose within range then blossoms with a low roar into an explosion of flame. Each creature in a 20-foot radius must make a Dexterity saving throw. A target takes 8d6 fire damage on a failed save, or half as much damage on a successful one. The fire spreads around corners. It ignites flammable objects in the area that aren't being worn or carried.\n\nAt Higher Levels. When you cast this spell using a spell slot of 4th level or higher, the damage increases by 1d6 for each slot level above 3rd.\n\nSpell Lists. Sorcerer, Wizard",
                 }
             ],
             "cards": [
@@ -222,6 +240,15 @@ class TestSheet:
                     "row": 1,
                     "stat_names": ["Arrows"],
                     "stat_configs": {"Arrows": {"show_max": True, "show_min": True}},
+                },
+                {
+                    "name": "FIREBALLL",
+                    "card_type": 1,
+                    "column": 2,
+                    "row": 2,
+                    "column_span": 3,
+                    "row_span": 2,
+                    "note_name": "FIREBALL",
                 },
             ],
         }

@@ -18,13 +18,16 @@ class Note:
 
         # Instance variables parsed from raw_text
         self.text: str = ""
-        self.inst_list: list[Instruction] = []
+        """Text without button syntax."""
+        self.button_data: list[tuple[str, str]] = []
+        """List of data required for the button in the format (button name, instruction)."""
 
         # Parse raw text
         self.parse_raw_text()
 
     def parse_raw_text(self) -> None:
         """Parses self's text to populate text and inst_list values."""
+        self.text = self.raw_text
         # TODO Implement this method
 
     @classmethod

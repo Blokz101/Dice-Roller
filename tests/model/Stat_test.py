@@ -14,14 +14,14 @@ class TestStat:
             {
                 "name": "Test Stat5",
                 "value": 12,
-                "history": [("Increased by 2", "+2")],
+                "history": [["Increased by 2", "+2"]],
             },
             {
                 "name": "Test Stat6",
                 "value": 18,
                 "max": 20,
                 "min": 10,
-                "history": [("Created", "+18"), ("Updated", "+0")],
+                "history": [["Created", "+18"], ["Updated", "+0"]],
             },
         ]
         expected_stat_list: list[Stat] = [

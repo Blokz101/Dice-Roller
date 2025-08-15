@@ -1,5 +1,6 @@
 from typing import Optional, Self
-from PyQt6.QtWidgets import QWidget
+from PyQt6.QtWidgets import QWidget, QTextBrowser, QPushButton, QVBoxLayout, QLabel
+from PyQt6.QtCore import Qt
 from src.model.Stat import Stat
 from src.model.Card import Card
 from src.model.Note import Note
@@ -14,6 +15,36 @@ class NoteWidget(CardWidget):
         # Model related instance vars
         self.note: Note = note
         """Note that is relevant to this widget."""
+
+        # GUI related instance vars
+        self.title_label: QLabel
+        self.text_browser: QTextBrowser
+        self.button_list: list[QPushButton]
+
+        # Widget config
+        self.build_new_layout()
+        self.setStyleSheet("background-color: palette(Midlight); border-radius: 4px")
+        self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
+
+    def build_new_layout(self) -> None:
+        layout: QVBoxLayout = QVBoxLayout()
+
+        self.title_label = QLabel(self.card.name)
+
+        self.text_browser = QTextBrowser()
+        self.text_browser.setText(self.note.text)
+        self.text_browser.setReadOnly(True)
+        self.text_browser.setTextInteractionFlags(
+            Qt.TextInteractionFlag.NoTextInteraction
+        )
+        self.text_browser.setOpenExternalLinks(True)
+        self.text_browser.setOpenLinks(True)
+
+        layout.addWidget(self.title_label)
+        layout.addWidget(self.text_browser)
+        # TODO Add code to add buttons to layout here
+
+        self.setLayout(layout)
 
     @classmethod
     def from_card(cls, card: Card, data_list: list[Stat | Note]) -> Self:

@@ -1,4 +1,4 @@
-from typing import Optional, cast
+from typing import Optional
 from PyQt6.QtWidgets import QScrollArea, QWidget, QGridLayout, QSizePolicy
 from PyQt6.QtCore import QSize, QObject, QRect, QPoint, Qt
 from PyQt6.QtGui import (
