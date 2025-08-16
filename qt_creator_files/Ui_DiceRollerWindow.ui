@@ -166,8 +166,6 @@
     </property>
     <addaction name="action_launch_stats_editor"/>
     <addaction name="action_launch_notes_editor"/>
-    <addaction name="action_add_stat_card"/>
-    <addaction name="action_add_note_card"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">

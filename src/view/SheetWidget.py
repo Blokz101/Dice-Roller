@@ -1,5 +1,5 @@
 from typing import Optional
-from PyQt6.QtWidgets import QScrollArea, QWidget, QGridLayout, QSizePolicy
+from PyQt6.QtWidgets import QScrollArea, QWidget, QGridLayout, QSizePolicy, QMenu
 from PyQt6.QtCore import QSize, QObject, QRect, QPoint, Qt
 from PyQt6.QtGui import (
     QDropEvent,
@@ -33,6 +33,10 @@ class SheetWidget(QScrollArea):
         self.preview_widget: QWidget = QWidget()
         """Widget that is shown as a preview of drop during drag-and-drop operations."""
 
+        # Widget config
+        self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.show_context_menu)  # type: ignore
+
         self._setup_grid()
         self.populate_from_sheet()
 
@@ -61,6 +65,13 @@ class SheetWidget(QScrollArea):
         self.setAcceptDrops(True)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Preferred)
+
+    def show_context_menu(self, pos: QPoint) -> None:
+        """Shows the context menu for the sheet widget."""
+        menu: QMenu = QMenu(self)
+        menu.addAction("Add Stat Card", self.add_stat_card)  # type: ignore
+        menu.addAction("Add Note Card", self.add_note_card)  # type: ignore
+        menu.exec(self.mapToGlobal(pos))  # type: ignore
 
     def populate_from_sheet(self) -> None:
         """Adds all card widgets in the sheet to the grid layout."""
@@ -94,7 +105,7 @@ class SheetWidget(QScrollArea):
 
         return super().sizeHint()
 
-    def dragEnterEvent(self, e: QDragEnterEvent) -> None:
+    def dragEnterEvent(self, e: QDragEnterEvent) -> None:  # type: ignore
         """
         Called by Qt when a drag operation enters the sheet widget.
         :param e: Event that contains drag info
@@ -115,11 +126,11 @@ class SheetWidget(QScrollArea):
         self.preview_widget.setFixedSize(size)
         e.accept()
 
-    def dragLeaveEvent(self, _: QDragLeaveEvent):
+    def dragLeaveEvent(self, _: QDragLeaveEvent) -> None:  # type: ignore
         """Called by Qt when the drag operation leaves this widget. Hide the preview widget."""
         self.preview_widget.hide()
 
-    def dragMoveEvent(self, e: QDragMoveEvent) -> None:
+    def dragMoveEvent(self, e: QDragMoveEvent) -> None:  # type: ignore
         """
         Called by Qt when a the mouse is moved while performing a drag operation.
         :param e: Event that contains drag info
@@ -141,7 +152,7 @@ class SheetWidget(QScrollArea):
             self.preview_widget.hide()
             e.ignore()
 
-    def dropEvent(self, e: QDropEvent) -> None:
+    def dropEvent(self, e: QDropEvent) -> None:  # type: ignore
         """
         Called by Qt when the drag operation is completed with a drop.
         :param e: Event that contains drag info
@@ -225,3 +236,9 @@ class SheetWidget(QScrollArea):
         if card not in self.card_widget_list:
             self.card_widget_list.append(card)
         return True
+
+    def add_stat_card(self) -> None:
+        """Adds a new stat card to the sheet."""
+
+    def add_note_card(self) -> None:
+        """Adds a new note card to the sheet."""

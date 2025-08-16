@@ -109,8 +109,6 @@ class Ui_DiceRollerWindow(object):
         self.menuSheet.addAction(self.action_new_sheet)
         self.menuCard.addAction(self.action_launch_stats_editor)
         self.menuCard.addAction(self.action_launch_notes_editor)
-        self.menuCard.addAction(self.action_add_stat_card)
-        self.menuCard.addAction(self.action_add_note_card)
         self.menuHelp.addAction(self.action_open_readme)
         self.menubar.addAction(self.menuSheet.menuAction())
         self.menubar.addAction(self.menuCard.menuAction())

@@ -5,6 +5,7 @@ from src.model.Stat import Stat
 from src.model.Card import Card
 from src.model.Note import Note
 from src.view.CardWidget import CardWidget
+from src.view.NoteCardConfig import NoteCardConfig
 
 
 class NoteWidget(CardWidget):
@@ -23,7 +24,6 @@ class NoteWidget(CardWidget):
 
         # Widget config
         self.build_new_layout()
-        self.setStyleSheet("background-color: palette(Midlight); border-radius: 4px")
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
 
     def build_new_layout(self) -> None:
@@ -62,6 +62,10 @@ class NoteWidget(CardWidget):
                 "data_list must contain a Note with name that matches card.note_name."
             )
         return cls(card, note)
+
+    def edit_card(self) -> None:
+        config = NoteCardConfig(self)
+        config.exec()
 
     def cells_width(self) -> int:
         return self.card.column_span or 1

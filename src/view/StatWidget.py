@@ -8,6 +8,7 @@ from src.model.Card import Card, StatConfig
 from src.model.Stat import Stat
 from src.model.Note import Note
 from src.view.CardWidget import CardWidget
+from src.view.StatCardConfig import StatCardConfig
 
 
 class _SingleStatWidget(QWidget):
@@ -77,7 +78,6 @@ class StatWidget(CardWidget):
 
         # Widget config
         self.build_new_layout()
-        self.setStyleSheet("background-color: palette(Midlight); border-radius: 4px")
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
 
     def build_new_layout(self) -> None:
@@ -113,6 +113,10 @@ class StatWidget(CardWidget):
         return cls(
             card, [stat for stat in stat_list if stat.name in (card.stat_names or [])]
         )
+
+    def edit_card(self) -> None:
+        config = StatCardConfig(self)
+        config.exec()
 
     def cells_width(self):
         hinted_size: QSize = super().sizeHint()

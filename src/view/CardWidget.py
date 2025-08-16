@@ -1,9 +1,9 @@
 from typing import Optional, Self
-from abc import ABC, abstractmethod
-from PyQt6.QtWidgets import QWidget
-from PyQt6.QtCore import Qt, QMimeData, QRect
+from PyQt6.QtWidgets import QWidget, QMenu
+from PyQt6.QtCore import Qt, QMimeData, QRect, QPoint
 from PyQt6.QtGui import (
     QMouseEvent,
+    QAction,
     QDrag,
     QPixmap,
 )
@@ -30,6 +30,35 @@ class CardWidget(QWidget):
             self.card.column, self.card.row, self.cells_width(), self.cells_height()
         )
         """Location of this card on a sheet."""
+
+        # Widget config
+        self.setStyleSheet(
+            "CardWidget {background-color: palette(Midlight); border-radius: 4px}"
+        )
+        self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.show_context_menu)  # type: ignore
+
+    def show_context_menu(self, pos: QPoint) -> None:
+        """
+        Shows the context menu for this card.
+        :param pos: The position of the mouse event
+        """
+        menu: QMenu = QMenu(self)
+        menu.addAction("Edit", self.edit_card)  # type: ignore
+        menu.addAction("Delete", self.delete_card)  # type: ignore
+        menu.exec(self.mapToGlobal(pos))  # type: ignore
+
+    def edit_card(self) -> None:
+        """
+        Opens a dialog to edit the card.
+        """
+        raise NotImplementedError
+
+    def delete_card(self) -> None:
+        """
+        Deletes the card.
+        """
+        raise NotImplementedError
 
     @classmethod
     def from_card(cls, card: Card, data_list: list[Stat | Note]) -> Self:
