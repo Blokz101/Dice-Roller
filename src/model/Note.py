@@ -26,7 +26,7 @@ class Note:
         self.parse_raw_text()
 
     def parse_raw_text(self) -> None:
-        """Parses self's text to populate text and inst_list values."""
+        """Parses self's text to populate text and button_data vars."""
         self.text = self.raw_text
         # TODO Implement this method
 

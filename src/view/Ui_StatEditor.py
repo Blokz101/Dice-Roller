@@ -27,6 +27,8 @@ class Ui_StatEditor(object):
         self.label_2.setObjectName("label_2")
         self.gridLayout.addWidget(self.label_2, 0, 2, 1, 1)
         self.stat_table_view = QtWidgets.QTableView(parent=StatEditor)
+        self.stat_table_view.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.SingleSelection)
+        self.stat_table_view.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)
         self.stat_table_view.setObjectName("stat_table_view")
         self.gridLayout.addWidget(self.stat_table_view, 1, 0, 1, 1)
         self.history_table_view = QtWidgets.QTableView(parent=StatEditor)

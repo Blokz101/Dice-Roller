@@ -36,7 +36,14 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QTableView" name="stat_table_view"/>
+    <widget class="QTableView" name="stat_table_view">
+     <property name="selectionMode">
+      <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
+     </property>
+     <property name="selectionBehavior">
+      <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
+     </property>
+    </widget>
    </item>
    <item row="1" column="2">
     <widget class="QTableView" name="history_table_view"/>

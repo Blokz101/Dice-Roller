@@ -18,6 +18,7 @@ class Sheet:
         card_list: Optional[list[Card]] = None,
     ):
         self.name: str = name
+        """Name of the sheet."""
         self.stat_list: list[Stat] = stat_list if stat_list is not None else []
         """List of Stat data objects."""
         self.note_list: list[Note] = note_list if note_list is not None else []

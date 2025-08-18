@@ -64,4 +64,4 @@ class Ui_HomeSheet(object):
         _translate = QtCore.QCoreApplication.translate
         HomeSheet.setWindowTitle(_translate("HomeSheet", "Form"))
         self.label.setText(_translate("HomeSheet", "Recent Sheets"))
-        self.label_2.setText(_translate("HomeSheet", " Welcome to Marcus\'s Dice Roller"))
+        self.label_2.setText(_translate("HomeSheet", " Welcome to Roll4Role"))

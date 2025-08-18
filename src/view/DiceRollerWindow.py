@@ -1,6 +1,6 @@
 from pathlib import Path
-from typing import Optional
-from PyQt6.QtWidgets import QMainWindow, QWidget, QFileDialog
+from typing import Optional, cast
+from PyQt6.QtWidgets import QMainWindow, QWidget, QFileDialog, QMessageBox
 from src.view.Ui_DiceRollerWindow import Ui_DiceRollerWindow
 from src.model.Sheet import Sheet
 from src.view.SheetWidget import SheetWidget
@@ -36,10 +36,22 @@ class DiceRollerWindow(QMainWindow, Ui_DiceRollerWindow):
 
     def launch_stats_editor_slot(self) -> None:
         """Slot called when the launch stats editor action is triggered. Opens the stats editor for the active sheet."""
-        stat_editor: StatEditor = StatEditor(self)
+        sheet: Optional[QWidget] = self.sheet_tab_widget.currentWidget()
+        if sheet is None or not isinstance(sheet, SheetWidget):
+            QMessageBox.warning(
+                self, "Error", "The stats of this sheet cannot be edited."
+            )
+            return
+        stat_editor: StatEditor = StatEditor(sheet.sheet, self)
         stat_editor.exec()
 
     def launch_notes_editor_slot(self) -> None:
         """Slot called when the launch notes editor action is triggered. Opens the notes editor for the active sheet."""
-        notes_editor: NoteEditor = NoteEditor(self)
+        sheet: Optional[QWidget] = self.sheet_tab_widget.currentWidget()
+        if sheet is None or not isinstance(sheet, SheetWidget):
+            QMessageBox.warning(
+                self, "Error", "The notes of this sheet cannot be edited."
+            )
+            return
+        notes_editor: NoteEditor = NoteEditor(sheet.sheet, self)
         notes_editor.exec()

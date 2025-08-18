@@ -68,7 +68,7 @@
         </font>
        </property>
        <property name="text">
-        <string> Welcome to Marcus's Dice Roller</string>
+        <string> Welcome to Roll4Role</string>
        </property>
       </widget>
      </item>
