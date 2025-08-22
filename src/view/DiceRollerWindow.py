@@ -1,8 +1,9 @@
 from pathlib import Path
-from typing import Optional, cast
+from typing import Optional
 from PyQt6.QtWidgets import QMainWindow, QWidget, QFileDialog, QMessageBox
 from src.view.Ui_DiceRollerWindow import Ui_DiceRollerWindow
 from src.model.Sheet import Sheet
+from src.view.StatWidget import StatWidget
 from src.view.SheetWidget import SheetWidget
 from src.view.StatEditor import StatEditor
 from src.view.NoteEditor import NoteEditor
@@ -44,6 +45,16 @@ class DiceRollerWindow(QMainWindow, Ui_DiceRollerWindow):
             return
         stat_editor: StatEditor = StatEditor(sheet.sheet, self)
         stat_editor.exec()
+
+        # Change the saved status if changes where made
+        if stat_editor.edits_made():
+            sheet.sheet.saved_to_file = False
+
+            # Update stats
+            for stat in sheet.card_widget_list:
+                if not isinstance(stat, StatWidget):
+                    continue
+                stat.update_stats(stat_editor.changed_stats)
 
     def launch_notes_editor_slot(self) -> None:
         """Slot called when the launch notes editor action is triggered. Opens the notes editor for the active sheet."""

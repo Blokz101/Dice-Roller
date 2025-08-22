@@ -93,6 +93,21 @@ class StatWidget(CardWidget):
         self.stat_layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.stat_layout)
 
+    def update_stats(self, changed_stat_list: list[str]) -> None:
+        """
+        Update select stats in this widget. If the stat is not contained in this widget it is ignored.
+        :param changed_stat_list: List of changed stat names.
+        """
+        for index in range(self.stat_layout.count()):
+            widget: QWidget = self.stat_layout.itemAt(index).widget()
+            if not isinstance(widget, _SingleStatWidget):
+                continue
+            if widget.stat.name in changed_stat_list:
+                self.stat_layout.removeWidget(widget)
+                self.stat_layout.insertWidget(
+                    index, _SingleStatWidget(self, widget.stat)
+                )
+
     @classmethod
     def from_card(cls, card: Card, data_list: list[Stat | Note]) -> Self:
         """
