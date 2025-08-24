@@ -49,11 +49,20 @@ class DiceRollerWindow(QMainWindow, Ui_DiceRollerWindow):
         # Change the saved status if changes where made
         if stat_editor.edits_made():
             sheet.sheet.saved_to_file = False
+            sheet.sheet = stat_editor.sheet
 
-            # Update stats
+            # Update stats in stat widget cards
             for stat in sheet.card_widget_list:
                 if not isinstance(stat, StatWidget):
                     continue
+
+                # Update stat names if they changed first because names are ids
+                for card in sheet.card_widget_list:
+                    if not isinstance(card, StatWidget):
+                        continue
+                    card.update_stat_names(stat_editor.changed_names)
+
+                # Update stats now that ids have been updated if required
                 stat.update_stats(stat_editor.changed_stats)
 
     def launch_notes_editor_slot(self) -> None:

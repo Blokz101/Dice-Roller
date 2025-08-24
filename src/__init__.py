@@ -1,12 +1,10 @@
 from enum import Enum
 
-
 class CardType(Enum):
     """Type of card. Either Stat card or Note card."""
 
     STAT = 0
     NOTE = 1
-
 
 GRID_SIZE: int = 100
 """Size of each square on the sheet grid."""

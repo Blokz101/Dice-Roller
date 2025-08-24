@@ -93,6 +93,27 @@ class StatWidget(CardWidget):
         self.stat_layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.stat_layout)
 
+    def update_stat_names(self, edited_names: dict[str, str]) -> None:
+        """
+        Update the stat names in Stat.name, Card.stat_names, and Card.stat_configs.
+        :param edited_names: A dictionary mapping old stat names to new stat names
+        """
+        # Update name in Stat.name
+        for stat in self.stat_list:
+            if stat.name in edited_names:
+                stat.name = edited_names[stat.name]
+
+        # Update name in Card.stat_configs
+        new_configs: dict[str, StatConfig] = {}
+        old_name: str
+        config: StatConfig
+        for old_name, config in self.card.stat_configs.items():  # type: ignore
+            if old_name in edited_names:
+                new_configs[edited_names[old_name]] = config
+            else:
+                new_configs[old_name] = config
+        self.card.stat_configs = new_configs  # type: ignore
+
     def update_stats(self, changed_stat_list: list[str]) -> None:
         """
         Update select stats in this widget. If the stat is not contained in this widget it is ignored.

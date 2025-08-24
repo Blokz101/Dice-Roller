@@ -10,9 +10,9 @@ from tests import SAMPLE1_JSON_PATH
 
 class TestSheet:
 
-    def test_from_json_with_sample1(self) -> None:
-        # Create expected stats from the sample JSON
-        expected_stats = [
+    def create_sample1_sheet(self) -> Sheet:
+        # Create sample stats
+        stats: list[Stat] = [
             Stat(name="Strength", value=10),
             Stat(name="Dexterity", value=19),
             Stat(name="Constitution", value=13),
@@ -22,88 +22,6 @@ class TestSheet:
             Stat(name="Arrows", value=45),
         ]
 
-        # Set history for stats that have it
-        expected_stats[0].history = [("Initial", "10"), ("Level One", "11")]
-        expected_stats[1].history = [("Initial", "10"), ("Level Two", "19")]
-        expected_stats[2].history = [("Initial", "10"), ("Level One", "13")]
-        expected_stats[3].history = [("Initial", "10"), ("Level One", "17")]
-        expected_stats[4].history = [("Initial", "10"), ("Level One", "11")]
-        expected_stats[5].history = [("Initial", "10"), ("Level One", "9")]
-
-        # Create expected notes from the sample JSON
-        expected_notes = [
-            Note(
-                name="FIREBALL",
-                raw_text="Casting Time: 1 action\nRange: 150 feet\nComponents: V, S, M (a tiny ball of bat guano and sulfur)\nDuration: Instantaneous\n\nA bright streak flashes from your pointing finger to a point you choose within range then blossoms with a low roar into an explosion of flame. Each creature in a 20-foot radius must make a Dexterity saving throw. A target takes 8d6 fire damage on a failed save, or half as much damage on a successful one. The fire spreads around corners. It ignites flammable objects in the area that aren't being worn or carried.\n\nAt Higher Levels. When you cast this spell using a spell slot of 4th level or higher, the damage increases by 1d6 for each slot level above 3rd.\n\nSpell Lists. Sorcerer, Wizard",
-            )
-        ]
-
-        # Create expected cards from the sample JSON
-        expected_cards = [
-            Card(
-                name="Core Stats",
-                card_type=CardType.STAT,
-                column=0,
-                row=0,
-                stat_names=[
-                    "Strength",
-                    "Dexterity",
-                    "Constitution",
-                    "Intelligence",
-                    "Wisdom",
-                    "Charisma",
-                ],
-                stat_configs={
-                    "Strength": StatConfig(subtext="+0"),
-                    "Dexterity": StatConfig(subtext="+4"),
-                    "Constitution": StatConfig(subtext="+1"),
-                    "Intelligence": StatConfig(subtext="+3"),
-                    "Wisdom": StatConfig(subtext="+0"),
-                    "Charisma": StatConfig(subtext="-1"),
-                },
-            ),
-            Card(
-                name="Ammunition",
-                card_type=CardType.STAT,
-                column=0,
-                row=1,
-                stat_names=["Arrows"],
-                stat_configs={"Arrows": StatConfig(show_max=True, show_min=True)},
-            ),
-            Card(
-                name="FIREBALLL",
-                card_type=CardType.NOTE,
-                column=2,
-                row=2,
-                column_span=3,
-                row_span=2,
-                note_name="FIREBALL",
-            ),
-        ]
-
-        expected_sheet: Sheet = Sheet(
-            name="Tim the Schizophrenic Assassin",
-            stat_list=expected_stats,
-            note_list=expected_notes,
-            card_list=expected_cards,
-        )
-        actual_sheet: Sheet = Sheet.from_json(SAMPLE1_JSON_PATH)
-
-        assert expected_sheet == actual_sheet
-
-    def test_to_dict_with_sample1(self):
-        # Create expected stats from the sample JSON
-        stats = [
-            Stat(name="Strength", value=10),
-            Stat(name="Dexterity", value=19),
-            Stat(name="Constitution", value=13),
-            Stat(name="Intelligence", value=17),
-            Stat(name="Wisdom", value=11),
-            Stat(name="Charisma", value=9),
-            Stat(name="Arrows", value=45),
-        ]
-
-        # Set history for stats that have it
         stats[0].history = [("Initial", "10"), ("Level One", "11")]
         stats[1].history = [("Initial", "10"), ("Level Two", "19")]
         stats[2].history = [("Initial", "10"), ("Level One", "13")]
@@ -111,16 +29,16 @@ class TestSheet:
         stats[4].history = [("Initial", "10"), ("Level One", "11")]
         stats[5].history = [("Initial", "10"), ("Level One", "9")]
 
-        # Create expected notes from the sample JSON
-        notes = [
+        # Create sample notes
+        notes: list[Note] = [
             Note(
                 name="FIREBALL",
                 raw_text="Casting Time: 1 action\nRange: 150 feet\nComponents: V, S, M (a tiny ball of bat guano and sulfur)\nDuration: Instantaneous\n\nA bright streak flashes from your pointing finger to a point you choose within range then blossoms with a low roar into an explosion of flame. Each creature in a 20-foot radius must make a Dexterity saving throw. A target takes 8d6 fire damage on a failed save, or half as much damage on a successful one. The fire spreads around corners. It ignites flammable objects in the area that aren't being worn or carried.\n\nAt Higher Levels. When you cast this spell using a spell slot of 4th level or higher, the damage increases by 1d6 for each slot level above 3rd.\n\nSpell Lists. Sorcerer, Wizard",
             )
         ]
 
-        # Create expected cards from the sample JSON
-        cards = [
+        # Create sample cards
+        cards: list[Card] = [
             Card(
                 name="Core Stats",
                 card_type=CardType.STAT,
@@ -162,13 +80,21 @@ class TestSheet:
             ),
         ]
 
-        sheet: Sheet = Sheet(
+        return Sheet(
             name="Tim the Schizophrenic Assassin",
             stat_list=stats,
             note_list=notes,
             card_list=cards,
         )
 
+    def test_from_json_with_sample1(self) -> None:
+        expected_sheet: Sheet = self.create_sample1_sheet()
+        actual_sheet: Sheet = Sheet.from_json(SAMPLE1_JSON_PATH)
+
+        assert expected_sheet == actual_sheet
+
+    def test_to_dict_with_sample1(self):
+        sheet: Sheet = self.create_sample1_sheet()
         expected_dict: dict[str, Any] = {
             "name": "Tim the Schizophrenic Assassin",
             "stats": [
@@ -276,7 +202,7 @@ class TestSheet:
 
     def test_sheet_name_from_dict(self) -> None:
         """Test that from_dict correctly parses the name field."""
-        test_data = {
+        test_data: dict[str, Any] = {
             "name": "Test Character Sheet",
             "stats": [],
             "notes": [],
@@ -287,13 +213,13 @@ class TestSheet:
 
     def test_from_dict_missing_name_raises_error(self) -> None:
         """Test that from_dict raises an error when name is missing."""
-        test_data = {"stats": [], "notes": [], "cards": []}
+        test_data: dict[str, Any] = {"stats": [], "notes": [], "cards": []}
         with pytest.raises(ValueError, match="Input dict is missing required keys"):
             Sheet.from_dict(test_data)
 
     def test_from_dict_invalid_name_type_raises_error(self) -> None:
         """Test that from_dict raises an error when name is not a string."""
-        test_data = {
+        test_data: dict[str, Any] = {
             "name": 123,  # Should be string, not int
             "stats": [],
             "notes": [],
@@ -315,3 +241,24 @@ class TestSheet:
         sheet1 = Sheet(name="Same Name", stat_list=stats)
         sheet2 = Sheet(name="Same Name", stat_list=stats)
         assert sheet1 == sheet2
+
+    def test_rename_stat(self) -> None:
+        """Test renaming a stat in the sheet."""
+        expected_sheet: Sheet = self.create_sample1_sheet()
+
+        # Update stat_list
+        expected_sheet.stat_list[0].name = "Str"
+
+        # Update card_list stat_names
+        assert expected_sheet.card_list[0].stat_names is not None
+        expected_sheet.card_list[0].stat_names[0] = "Str"
+
+        # Update card_list stat_configs
+        assert expected_sheet.card_list[0].stat_configs is not None
+        config: StatConfig = expected_sheet.card_list[0].stat_configs.pop("Strength")
+        expected_sheet.card_list[0].stat_configs["Str"] = config
+
+        actual_sheet: Sheet = self.create_sample1_sheet()
+        actual_sheet.rename_stat("Strength", "Str")
+
+        assert expected_sheet == actual_sheet

@@ -6,7 +6,5 @@ STAT_EDITOR_TABLE_HEADERS: list[str] = ["Name", "Value", "Max", "Min"]
 STAT_EDITOR_HISTORY_TABLE_HEADERS: list[str] = ["Description", "Edit", "Total"]
 """Headers for the stat editor history table."""
 
-STAT_CHANGED_EVENT_TYPE: int = QEvent.registerEventType()
-"""Stat changed event type id."""
-NOTE_CHANGED_EVENT_TYPE: int = QEvent.registerEventType()
-"""Note changed event type id."""
+STAT_NAME_CHANGED: int = QEvent.registerEventType()
+"""Stat name changed event type"""
