@@ -1,12 +1,11 @@
 from typing import Optional, Any
 from copy import deepcopy
-from PyQt6.QtWidgets import QDialog, QWidget, QAbstractItemView, QApplication
+from PyQt6.QtWidgets import QDialog, QWidget, QAbstractItemView, QMessageBox
 from PyQt6.QtCore import QAbstractTableModel, Qt, QModelIndex, QVariant
 from src.model.Sheet import Sheet
 from src.model.Stat import Stat
 from src.view import STAT_EDITOR_TABLE_HEADERS, STAT_EDITOR_HISTORY_TABLE_HEADERS
 from src.view.Ui_StatEditor import Ui_StatEditor
-from src.view.StatWidget import StatWidget
 
 
 class StatEditor(QDialog, Ui_StatEditor):
@@ -96,16 +95,25 @@ class StatEditorTableModel(QAbstractTableModel):
 
         try:
             if index.column() == 0:  # Name
+                # Ensure the name is not already in use
+                if str(value) in [stat.name for stat in self.editor.sheet.stat_list]:
+                    QMessageBox.critical(
+                        self.editor,
+                        "Error",
+                        "Failed to rename stat, is the name already in use?",
+                    )
+                    return False
+
                 # Update the name changed list
-                name_updated: bool = False
+                name_updated_previously: bool = False
                 for old_name, new_name in self.editor.changed_names.items():
 
                     if new_name == stat.name:
                         self.editor.changed_names[old_name] = str(value)
-                        name_updated = True
+                        name_updated_previously = True
                         break
 
-                if not name_updated:
+                if not name_updated_previously:
                     self.editor.changed_names[stat.name] = str(value)
 
                 # Remove old name from the changed_stats, the new name will be added at the end of this function
