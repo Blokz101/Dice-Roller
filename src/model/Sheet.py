@@ -105,6 +105,78 @@ class Sheet:
         with open(json_path, "w", encoding="utf-8") as json_file:
             json.dump(self.to_dict(), json_file, ensure_ascii=False, indent=4)
 
+    def assign(self, new_sheet: Sheet) -> None:
+        """
+        Updates all instance variables and instance variable classes to contain the values from new_sheet without changing objects.
+        :param new_sheet: Sheet to set this sheet equal to
+        """
+        self.name = new_sheet.name
+        self.saved_to_file = new_sheet.saved_to_file
+        
+        # Update stat_list by assigning to existing stats or creating new ones
+        # First, update existing stats
+        for i, new_stat in enumerate(new_sheet.stat_list):
+            if i < len(self.stat_list):
+                self.stat_list[i].assign(new_stat)
+            else:
+                # Add new stats
+                self.stat_list.append(Stat(
+                    name=new_stat.name,
+                    value=new_stat.value,
+                    max_value=new_stat.max,
+                    min_value=new_stat.min,
+                ))
+                self.stat_list[-1].history = new_stat.history.copy()
+        
+        # Remove extra stats if new list is shorter
+        if len(self.stat_list) > len(new_sheet.stat_list):
+            self.stat_list = self.stat_list[:len(new_sheet.stat_list)]
+        
+        # Update note_list by assigning to existing notes or creating new ones
+        for i, new_note in enumerate(new_sheet.note_list):
+            if i < len(self.note_list):
+                self.note_list[i].assign(new_note)
+            else:
+                # Add new notes
+                self.note_list.append(Note(
+                    name=new_note.name,
+                    raw_text=new_note.raw_text,
+                ))
+        
+        # Remove extra notes if new list is shorter
+        if len(self.note_list) > len(new_sheet.note_list):
+            self.note_list = self.note_list[:len(new_sheet.note_list)]
+        
+        # Update card_list by assigning to existing cards or creating new ones
+        for i, new_card in enumerate(new_sheet.card_list):
+            if i < len(self.card_list):
+                self.card_list[i].assign(new_card)
+            else:
+                # Add new cards
+                self.card_list.append(Card(
+                    name=new_card.name,
+                    card_type=new_card.card_type,
+                    column=new_card.column,
+                    row=new_card.row,
+                    column_span=new_card.column_span,
+                    row_span=new_card.row_span,
+                    note_name=new_card.note_name,
+                    stat_names=new_card.stat_names.copy() if new_card.stat_names is not None else None,
+                    stat_configs={
+                        name: StatConfig(
+                            show_max=config.show_max,
+                            show_min=config.show_min,
+                            subtext=config.subtext,
+                            display_name=config.display_name,
+                        )
+                        for name, config in new_card.stat_configs.items()
+                    } if new_card.stat_configs is not None else None,
+                ))
+        
+        # Remove extra cards if new list is shorter
+        if len(self.card_list) > len(new_sheet.card_list):
+            self.card_list = self.card_list[:len(new_sheet.card_list)]
+
     def rename_stat(self, old_name: str, new_name: str) -> bool:
         """
         Renames a stat in the sheet.
@@ -123,14 +195,39 @@ class Sheet:
 
         # Rename the stat and update its name in all cards that reference it
         target_stat.name = new_name
-        for card_idx, card in enumerate(self.card_list):
+        for card in self.card_list:
             if card.stat_names is None:
                 continue
             for stat_idx, stat_name in enumerate(card.stat_names):
                 if stat_name == old_name:
-                    self.card_list[card_idx].stat_names[stat_idx] = new_name  # type: ignore
-                    config: StatConfig = self.card_list[card_idx].stat_configs.pop(old_name)  # type: ignore
-                    self.card_list[card_idx].stat_configs[new_name] = config  # type: ignore
+                    card.stat_names[stat_idx] = new_name  # type: ignore
+                    config: StatConfig = card.stat_configs.pop(old_name)  # type: ignore
+                    card.stat_configs[new_name] = config  # type: ignore
+        return True
+
+    def rename_note(self, old_name: str, new_name: str) -> bool:
+        """
+        Renames a note in the sheet.
+        :param old_name: The current name of the note 
+        :param new_name: The new name for the note
+        :returns: True if the note was found and renamed, false otherwise
+        """
+        # Locate the note in the note_list
+        target_note: Optional[Note] = None
+        for note in self.note_list:
+            if note.name == old_name:
+                target_note = note
+                break
+        if target_note is None:
+            return False
+
+        # Rename the note and update its name in all cards that reference it
+        target_note.name = new_name
+        for card in self.card_list:
+            if card.note_name is None:
+                continue
+            if card.note_name == old_name:
+                card.note_name = new_name
         return True
 
     def __eq__(self, other: object) -> bool:

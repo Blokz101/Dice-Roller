@@ -88,3 +88,27 @@ class TestStat:
         for expected_dict, stat in zip(expected_dict_list, stat_list):
             actual_dict: dict[str, Any] = stat.to_dict()
             assert expected_dict == actual_dict
+
+    def test_assign(self) -> None:
+        """Test the assign function."""
+        # Create initial stat with some values
+        actual_stat: Stat = Stat(
+            name="Original Stat",
+            value=10,
+            max_value=20,
+            min_value=5,
+        )
+        actual_stat.history = [("Initial", "10"), ("Level 1", "15")]
+        
+        # Create expected stat with different values
+        expected_stat: Stat = Stat(
+            name="Updated Stat",
+            value=25,
+            max_value=30,
+            min_value=0,
+        )
+        expected_stat.history = [("Start", "5"), ("Mid", "15"), ("End", "25")]
+        
+        # Test assign
+        actual_stat.assign(expected_stat)
+        assert actual_stat == expected_stat

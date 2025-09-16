@@ -170,6 +170,32 @@ class Card:
             return None
         return self.stat_configs.get(stat_name, None)
 
+    def assign(self, other: Card) -> None:
+        """
+        Updates all instance variables to contain the values from the other card.
+        :param other: Card to copy values from
+        """
+        self.name = other.name
+        self.card_type = other.card_type
+        self.column = other.column
+        self.row = other.row
+        self.column_span = other.column_span
+        self.row_span = other.row_span
+        self.note_name = other.note_name
+        self.stat_names = other.stat_names.copy() if other.stat_names is not None else None
+        if other.stat_configs is not None:
+            self.stat_configs = {
+                name: StatConfig(
+                    show_max=config.show_max,
+                    show_min=config.show_min,
+                    subtext=config.subtext,
+                    display_name=config.display_name,
+                )
+                for name, config in other.stat_configs.items()
+            }
+        else:
+            self.stat_configs = None
+
     def __eq__(self, obj: object) -> bool:
         if not isinstance(obj, Card):
             return False

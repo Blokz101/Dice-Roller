@@ -49,7 +49,9 @@ class DiceRollerWindow(QMainWindow, Ui_DiceRollerWindow):
         # Change the saved status if changes where made
         if stat_editor.edits_made():
             sheet.sheet.saved_to_file = False
-            sheet.sheet = stat_editor.sheet
+
+            # Update the underlying model
+            sheet.sheet.assign(stat_editor.sheet)
 
             # Update stats in stat widget cards
             for stat in sheet.card_widget_list:

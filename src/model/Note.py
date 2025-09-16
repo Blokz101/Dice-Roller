@@ -43,6 +43,16 @@ class Note:
     def to_dict(self) -> dict[str, Any]:
         return {"name": self.name, "text": self.raw_text}
 
+    def assign(self, other: Note) -> None:
+        """
+        Updates all instance variables to contain the values from the other note.
+        :param other: Note to copy values from
+        """
+        self.name = other.name
+        self.raw_text = other.raw_text
+        self.text = other.text
+        self.button_data = other.button_data.copy()
+
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Note):
             return False

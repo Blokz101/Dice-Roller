@@ -201,3 +201,57 @@ class TestCard:
         for expected_dict, card in zip(expected_dict_list, card_list):
             actual_dict: dict[str, Any] = card.to_dict()
             assert expected_dict == actual_dict
+
+    def test_assign(self) -> None:
+        """Test the assign function."""
+        # Create initial stat and note card
+        actual_stat_card: Card = Card(
+            name="Original Stat Card",
+            card_type=CardType.STAT,
+            column=0,
+            row=0,
+            stat_names=["Health"],
+            stat_configs={"Health": StatConfig(show_max=False)},
+        )
+        
+        actual_note_card: Card = Card(
+            name="Original Note Card",
+            card_type=CardType.NOTE,
+            column=1,
+            row=1,
+            column_span=2,
+            row_span=2,
+            note_name="Old Note",
+        )
+        
+        # Create expected stat and note card
+        expected_stat_card: Card = Card(
+            name="Updated Stat Card",
+            card_type=CardType.STAT,
+            column=2,
+            row=3,
+            stat_names=["Health", "Mana", "Stamina"],
+            stat_configs={
+                "Health": StatConfig(show_max=True, subtext="+2"),
+                "Mana": StatConfig(show_min=True, display_name="Magic Points"),
+                "Stamina": StatConfig(subtext="-1"),
+            },
+        )
+        
+        expected_note_card: Card = Card(
+            name="Updated Note Card",
+            card_type=CardType.NOTE,
+            column=4,
+            row=5,
+            column_span=1,
+            row_span=3,
+            note_name="New Note",
+        )
+        
+        # Test assign for stat card
+        actual_stat_card.assign(expected_stat_card)
+        assert expected_stat_card == actual_stat_card
+        
+        # Test assign for note card
+        actual_note_card.assign(expected_note_card)
+        assert expected_note_card == actual_note_card

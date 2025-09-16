@@ -67,6 +67,17 @@ class Stat:
         self.value = new_value
         self.history = []
 
+    def assign(self, other: Stat) -> None:
+        """
+        Updates all instance variables to contain the values from the other stat.
+        :param other: Stat to copy values from
+        """
+        self.name = other.name
+        self.value = other.value
+        self.max = other.max
+        self.min = other.min
+        self.history = other.history.copy()
+
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Stat):
             return False

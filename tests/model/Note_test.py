@@ -52,3 +52,23 @@ class TestNote:
         for expected_dict, note in zip(expected_dict_list, note_list):
             actual_dict: dict[str, Any] = note.to_dict()
             assert expected_dict == actual_dict
+
+    def test_assign(self) -> None:
+        """Test the assign function."""
+        # Create initial note
+        actual_note: Note = Note(
+            name="STAY STILL",
+            raw_text="Source: Player's Handbook\n2nd-level enchantment\n\nCasting Time: 1 action\nRange: 60 feet\nComponents: V, S, M (a small, straight piece of iron)\nDuration: Concentration, up to 1 minute\n\nChoose a humanoid that you can see within range. The target must succeed on a Wisdom saving throw or be paralyzed for the duration. At the end of each of its turns, the target can make another Wisdom saving throw. On a success, the spell ends on the target.\n\nAt Higher Levels. When you cast this spell using a spell slot of 3rd level or higher, you can target one additional humanoid for each slot level above 2nd. The humanoids must be within 30 feet of each other when you target them.\n\nSpell Lists. Bard, Cleric, Druid, Sorcerer, Warlock, Wizard"
+        )
+        actual_note.parse_raw_text()
+        
+        # Create expected note with different values
+        expected_note: Note = Note(
+            name="BURNNN",
+            raw_text="Source: Player's Handbook\n\nEvocation cantrip\n\nCasting Time: 1 action\nRange: 120 feet\nComponents: V, S\nDuration: Instantaneous\n\nYou hurl a mote of fire at a creature or object within range. Make a ranged spell attack against the target. On a hit, the target takes 1d10 fire damage. A flammable object hit by this spell ignites if it isn’t being worn or carried.\n\nAt Higher Levels. This spell’s damage increases by 1d10 when you reach 5th level (2d10), 11th level (3d10), and 17th level (4d10).\n\nSpell Lists. Artificer, Sorcerer, Wizard"
+        )
+        expected_note.parse_raw_text()
+        
+        # Test assign
+        actual_note.assign(expected_note)
+        assert actual_note == expected_note

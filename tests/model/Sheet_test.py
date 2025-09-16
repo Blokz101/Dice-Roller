@@ -262,3 +262,46 @@ class TestSheet:
         actual_sheet.rename_stat("Strength", "Str")
 
         assert expected_sheet == actual_sheet
+
+    def test_assign(self) -> None:
+        """Test assigning a sheet to another sheet. This function will also test the Card, Stat, and Note assign functions."""
+        expected_sheet: Sheet = self.create_sample1_sheet()
+        actual_sheet: Sheet = self.create_sample1_sheet()
+
+        # Edit card core stats
+        expected_sheet.card_list[0].name = "Edited Core Stats"
+        expected_sheet.card_list[0].column = 2
+        expected_sheet.card_list[0].row = 4
+        expected_sheet.card_list[0].stat_names = ["Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "New stat that does not exist"]
+        assert expected_sheet.card_list[0].stat_configs is not None
+        expected_sheet.card_list[0].stat_configs["Wisdom"].subtext = None
+        expected_sheet.card_list[0].stat_configs["Wisdom"].display_name = "Wis Display"
+
+        expected_sheet.card_list[1].name = "Edited FIREBALLL"
+        expected_sheet.card_list[1].column = 1
+        expected_sheet.card_list[1].row = 5
+        expected_sheet.card_list[1].note_name = "Note that does not exist"
+
+        # Edit stat strength and dex names
+        assert expected_sheet.rename_stat("Strength", "Str")
+        assert expected_sheet.rename_stat("Dexterity", "Dex")
+        assert expected_sheet.rename_stat("Str", "Strength")
+
+        # Edit stat con value and history
+        expected_sheet.stat_list[2].value =+ 2
+        expected_sheet.stat_list[2].history.append(("Level Two", "+2"))
+
+        # Add stat int and wis min and max
+        expected_sheet.stat_list[3].min = 0
+        expected_sheet.stat_list[3].max = 20
+        
+        # Edit note FIREBALLL name and raw_text
+        expected_sheet.rename_note("FIREBALL", "Fireball")
+        expected_sheet.note_list[0].raw_text = "Ahh there goes the fireball text"
+        expected_sheet.note_list[0].parse_raw_text()
+
+        # Assert assign works
+        actual_sheet.assign(expected_sheet)
+        assert expected_sheet == actual_sheet
+        
+
