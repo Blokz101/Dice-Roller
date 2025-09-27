@@ -22,12 +22,12 @@ class TestSheet:
             Stat(name="Arrows", value=45),
         ]
 
-        stats[0].history = [("Initial", "10"), ("Level One", "11")]
-        stats[1].history = [("Initial", "10"), ("Level Two", "19")]
-        stats[2].history = [("Initial", "10"), ("Level One", "13")]
-        stats[3].history = [("Initial", "10"), ("Level One", "17")]
-        stats[4].history = [("Initial", "10"), ("Level One", "11")]
-        stats[5].history = [("Initial", "10"), ("Level One", "9")]
+        stats[0].history = [("Initial", "9"), ("Level One", "1")]
+        stats[1].history = [("Initial", "10"), ("Level Two", "9")]
+        stats[2].history = [("Initial", "8"), ("Level One", "5")]
+        stats[3].history = [("Initial", "15"), ("Level One", "2")]
+        stats[4].history = [("Initial", "10"), ("Level One", "1")]
+        stats[5].history = [("Initial", "16"), ("Level One", "-7")]
 
         # Create sample notes
         notes: list[Note] = [
@@ -101,32 +101,32 @@ class TestSheet:
                 {
                     "name": "Strength",
                     "value": 10,
-                    "history": [("Initial", "10"), ("Level One", "11")],
+                    "history": [("Initial", "9"), ("Level One", "1")],
                 },
                 {
                     "name": "Dexterity",
                     "value": 19,
-                    "history": [("Initial", "10"), ("Level Two", "19")],
+                    "history": [("Initial", "10"), ("Level Two", "9")],
                 },
                 {
                     "name": "Constitution",
                     "value": 13,
-                    "history": [("Initial", "10"), ("Level One", "13")],
+                    "history": [("Initial", "8"), ("Level One", "5")],
                 },
                 {
                     "name": "Intelligence",
                     "value": 17,
-                    "history": [("Initial", "10"), ("Level One", "17")],
+                    "history": [("Initial", "15"), ("Level One", "2")],
                 },
                 {
                     "name": "Wisdom",
                     "value": 11,
-                    "history": [("Initial", "10"), ("Level One", "11")],
+                    "history": [("Initial", "10"), ("Level One", "1")],
                 },
                 {
                     "name": "Charisma",
                     "value": 9,
-                    "history": [("Initial", "10"), ("Level One", "9")],
+                    "history": [("Initial", "16"), ("Level One", "-7")],
                 },
                 {"name": "Arrows", "value": 45},
             ],

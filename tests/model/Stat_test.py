@@ -86,18 +86,7 @@ class TestStat:
             actual_dict: dict[str, Any] = stat.to_dict()
             assert expected_dict == actual_dict
 
-    def test_set_value_unchanged_values(self) -> None:
-        """Test the set_value function with values that have not changed."""
-        expected_stat_list: list[Stat] = self.create_stat_data()
-        actual_stat_list: list[Stat] = self.create_stat_data()
-
-        for actual_stat in expected_stat_list:
-            actual_stat.set_value(actual_stat.value)
-
-        for actual_stat, expected_stat in zip(actual_stat_list, expected_stat_list):
-            assert expected_stat == actual_stat
-
-    def test_set_value_changed_values(self) -> None:
+    def test_set_value(self) -> None:
         """Test the set_value function with values that have changed."""
         expected_stat_list: list[Stat] = self.create_stat_data()
         actual_stat_list: list[Stat] = self.create_stat_data()

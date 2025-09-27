@@ -48,7 +48,9 @@ class StatEditor(QDialog, Ui_StatEditor):
         :param current: The current index
         :param previous: The previous index
         """
-        self.history_table_model.set_new_stat(self.sheet.stat_list[current.row()])
+        new_stat: Stat = self.sheet.stat_list[current.row()]
+        self.history_table_model.set_new_stat(new_stat)
+        self.label_2.setText(f"{new_stat.name} Stat History")
 
     def edits_made(self) -> bool:
         """
@@ -125,8 +127,9 @@ class StatEditorTableModel(QAbstractTableModel):
                 stat.name = str(value)
 
             elif index.column() == 1:  # Value
-                # TODO If the stat has a history and is being directly edited, show a warning
-                stat.value = int(value)
+                reply: QMessageBox.StandardButton = QMessageBox.question(self.editor, "Clear History Warning", "Directly setting this value will delete its history, do you want to continue?")
+                if reply == QMessageBox.StandardButton.Yes:
+                    stat.set_value(int(value))
 
             elif index.column() == 2:  # Max
                 stat.max = int(value)
@@ -173,12 +176,15 @@ class HistoryTableModel(QAbstractTableModel):
         self.stat: Optional[Stat] = stat
         """Reference to the stat this editor is currently editing."""
 
-    def flags(self, index):
-        return (
-            Qt.ItemFlag.ItemIsEnabled
-            | Qt.ItemFlag.ItemIsSelectable
-            | Qt.ItemFlag.ItemIsEditable
-        )
+    def flags(self, index: QModelIndex):
+        if index.column() < 2:
+            return (
+                Qt.ItemFlag.ItemIsEnabled
+                | Qt.ItemFlag.ItemIsSelectable
+                | Qt.ItemFlag.ItemIsEditable
+            )
+        else:
+            return Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable
 
     def data(self, index: QModelIndex, role: int) -> Any:
         if self.stat is None:
@@ -198,6 +204,8 @@ class HistoryTableModel(QAbstractTableModel):
                 return description
             if index.column() == 1:  # Edit
                 return edit
+            if index.column() == 2:  # Total
+                return self.stat.calculate_value()[index.row()]
 
         return QVariant()
 
@@ -218,9 +226,6 @@ class HistoryTableModel(QAbstractTableModel):
                 )
 
         elif index.column() == 1:  # Edit
-            # TODO Do error checking on the passed value to make sure it can be parsed.
-            # If it cannot be parsed this operation should fail. Blank cells should have no effect because
-            # if a cell is added with description first, an error should not be thrown
             if new_row:
                 self.stat.history.append(("", str(value)))
             else:
@@ -228,6 +233,8 @@ class HistoryTableModel(QAbstractTableModel):
                     self.stat.history[history_row_idx][0],
                     str(value),
                 )
+                
+        self.stat.remove_empty_history_rows()
 
         self.layoutChanged.emit()
         self.editor.stat_table_view.model().layoutChanged.emit()  # type: ignore

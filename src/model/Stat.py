@@ -59,17 +59,13 @@ class Stat:
         """
         return len(self.history) > 0
 
-    def set_value(self, new_value: int) -> bool:
+    def set_value(self, new_value: int) -> None:
         """
         Sets the value and discards the history.
         :param new_value: New value to set for the stat
-        :returns: True if new_value was different and set, false otherwise
         """
-        if new_value == self.value:
-            return False
         self.value = new_value
         self.history = [("Initial", str(new_value))]
-        return True
 
     def calculate_value(self) -> list[Optional[int]]:
         """
@@ -125,6 +121,10 @@ class Stat:
         if value_list[-1] is not None:
             self.value = value_list[-1]
         return value_list
+
+    def remove_empty_history_rows(self) -> None:
+        """Removes all empty history rows."""
+        self.history = [row for row in self.history if row[0] != "" or row[1] != ""]
 
     def assign(self, other: Stat) -> None:
         """
