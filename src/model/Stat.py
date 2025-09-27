@@ -70,6 +70,30 @@ class Stat:
         self.value = new_value
         self.history = []
         return True
+    
+    def calculate_value(self) -> bool:
+        """
+        Sets self.value based on the history list.
+        :returns: True if the value could be calculated and was set from the history"
+        """
+        self.value = 0
+        for _, value_mod in self.history:
+            if value_mod == "":
+                continue
+            try: 
+                if value_mod[0] == "=" :
+                    self.value = int(eval(value_mod[1:]))
+                elif value_mod[0].isdigit():
+                    self.value += int(eval(value_mod))
+                elif value_mod[0] in "+-*/":
+                    self.value = int(eval(f"{self.value}{value_mod}"))
+                else:
+                    self.value = 0
+                    return False
+            except ValueError:
+                self.value = 0
+                return False
+        return True
 
     def assign(self, other: Stat) -> None:
         """

@@ -110,6 +110,37 @@ class TestStat:
 
         for actual_stat, expected_stat in zip(actual_stat_list, expected_stat_list):
             assert expected_stat == actual_stat
+            
+    def test_calculate_value(self):
+        """Tests the calculate value function."""
+        stat_history_list: list[list[tuple[str, str]]] = [
+            [("test", "+3")],
+            [("test1", "3"), ("test2", "*5")],
+            [("test1", "+3"), ("test2", "+3*2")],
+            [("test1", "-3"), ("test2", ""), ("test3", "-2")],
+            [("test1", "+5"), ("test2", "/2")],
+            [("test1", "+3"), ("test2", "-2"), ("test3", "=10")],
+            [("test1", "+3"), ("test2", "-2"), ("test3", "=8"), ("test4", "*2+6")],
+            [("test1", "+6-2"), ("test2", "*2-5")],
+            [("test1", "+6-2"), ("test2", "fead")]
+        ]
+        expected_values: list[tuple[int, bool]] = [
+            (0+3, True),
+            (0+3*5, True),
+            (0+3+3*2, True),
+            (0-3-2, True),
+            (0+int(5/2), True),
+            (10, True),
+            (8*2+6, True),
+            ((6-2)*2-5, True),
+            (0, False),
+        ]
+
+        for history, (expected_value, expected_return) in zip(stat_history_list, expected_values):
+            stat: Stat = Stat("test_stat")
+            stat.history = history
+            assert expected_return == stat.calculate_value()
+            assert expected_value == stat.value
 
     def test_assign(self) -> None:
         """Test the assign function."""
