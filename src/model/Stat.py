@@ -59,13 +59,17 @@ class Stat:
         """
         return len(self.history) > 0
 
-    def set_value(self, new_value: int) -> None:
+    def set_value(self, new_value: int) -> bool:
         """
         Sets the value and discards the history.
         :param new_value: New value to set for the stat
+        :returns: True if new_value was different and set, false otherwise
         """
+        if new_value == self.value:
+            return False
         self.value = new_value
         self.history = []
+        return True
 
     def assign(self, other: Stat) -> None:
         """

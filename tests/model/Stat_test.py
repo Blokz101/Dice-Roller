@@ -1,8 +1,25 @@
-from typing import Any
+from typing import Any, Optional
 from src.model.Stat import Stat
 
 
 class TestStat:
+
+    def create_stat_data(self) -> list[Stat]:
+        """Creates a list of stats for testing purposes."""
+        stat_list: list[Stat] = [
+            Stat(name="Test Stat1", value=10),
+            Stat(name="Test Stat2", value=5, max_value=15),
+            Stat(name="Test Stat3", value=8, min_value=5),
+            Stat(name="Test Stat4", value=20, max_value=25, min_value=10),
+            Stat(name="Test Stat5", value=12),
+            Stat(name="Test Stat6", value=18, max_value=20, min_value=10),
+        ]
+
+        # Set history for Test Stat5 and Test Stat6
+        stat_list[4].history = [("Increased by 2", "+2")]
+        stat_list[5].history = [("Created", "+18"), ("Updated", "+0")]
+        
+        return stat_list
 
     def test_from_dict_valid(self):
         """Tests that valid dictionaries are converted to Stat objects correctly."""
@@ -24,21 +41,11 @@ class TestStat:
                 "history": [["Created", "+18"], ["Updated", "+0"]],
             },
         ]
-        expected_stat_list: list[Stat] = [
-            Stat(name="Test Stat1", value=10),
-            Stat(name="Test Stat2", value=5, max_value=15),
-            Stat(name="Test Stat3", value=8, min_value=5),
-            Stat(name="Test Stat4", value=20, max_value=25, min_value=10),
-            Stat(name="Test Stat5", value=12),
-            Stat(name="Test Stat6", value=18, max_value=20, min_value=10),
-        ]
 
-        # Set history for Test Stat5 and Test Stat6
-        expected_stat_list[4].history = [("Increased by 2", "+2")]
-        expected_stat_list[5].history = [("Created", "+18"), ("Updated", "+0")]
+        expected_stat_list: list[Stat] = self.create_stat_data()
 
         for stat_dict, expected_stat in zip(dicts_list, expected_stat_list):
-            actual_stat: Stat = Stat.from_dict(stat_dict)
+            actual_stat: Optional[Stat] = Stat.from_dict(stat_dict)
             assert expected_stat == actual_stat
 
     def test_from_dict_invalid(self):
@@ -72,22 +79,37 @@ class TestStat:
                 "history": [("Created", "+18"), ("Updated", "+0")],
             },
         ]
-        stat_list: list[Stat] = [
-            Stat(name="Test Stat1", value=10),
-            Stat(name="Test Stat2", value=5, max_value=15),
-            Stat(name="Test Stat3", value=8, min_value=5),
-            Stat(name="Test Stat4", value=20, max_value=25, min_value=10),
-            Stat(name="Test Stat5", value=12),
-            Stat(name="Test Stat6", value=18, max_value=20, min_value=10),
-        ]
-
-        # Set history for Test Stat5 and Test Stat6
-        stat_list[4].history = [("Increased by 2", "+2")]
-        stat_list[5].history = [("Created", "+18"), ("Updated", "+0")]
-
+        stat_list: list[Stat] = self.create_stat_data()
+        
         for expected_dict, stat in zip(expected_dict_list, stat_list):
             actual_dict: dict[str, Any] = stat.to_dict()
             assert expected_dict == actual_dict
+
+    def test_set_value_unchanged_values(self) -> None:
+        """Test the set_value function with values that have not changed."""
+        expected_stat_list: list[Stat] = self.create_stat_data()
+        actual_stat_list: list[Stat] = self.create_stat_data()
+
+        for actual_stat in expected_stat_list:
+            actual_stat.set_value(actual_stat.value)
+
+        for actual_stat, expected_stat in zip(actual_stat_list, expected_stat_list):
+            assert expected_stat == actual_stat
+
+    def test_set_value_changed_values(self) -> None:
+        """Test the set_value function with values that have changed."""
+        expected_stat_list: list[Stat] = self.create_stat_data()
+        actual_stat_list: list[Stat] = self.create_stat_data()
+
+        new_stat_value_list: list[int] = [21, 43, 10, 0, 5, 12]
+
+        for new_value, actual_stat, expected_stat in zip(new_stat_value_list, actual_stat_list, expected_stat_list):
+            expected_stat.value = new_value
+            expected_stat.history = []
+            actual_stat.set_value(new_value)
+
+        for actual_stat, expected_stat in zip(actual_stat_list, expected_stat_list):
+            assert expected_stat == actual_stat
 
     def test_assign(self) -> None:
         """Test the assign function."""

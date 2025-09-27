@@ -168,16 +168,28 @@ class HistoryTableModel(QAbstractTableModel):
     def __init__(self, editor: StatEditor, stat: Optional[Stat] = None):
         super().__init__(editor)
 
+        self.editor: StatEditor = editor
+        """Reference to the editor this model belongs to."""
         self.stat: Optional[Stat] = stat
-        """Reference to the stat this model belongs to."""
+        """Reference to the stat this editor is currently editing."""
 
     def flags(self, index):
-        return Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable
+        return (
+            Qt.ItemFlag.ItemIsEnabled
+            | Qt.ItemFlag.ItemIsSelectable
+            | Qt.ItemFlag.ItemIsEditable
+        )
 
     def data(self, index: QModelIndex, role: int) -> Any:
         if self.stat is None:
-            return QVariant()
+            return QVariant
+
         if role == Qt.ItemDataRole.DisplayRole:
+
+            # If the row is the blank row used to add new entries
+            if index.row() == len(self.stat.history):
+                return ""
+
             description: str
             edit: str
             description, edit = self.stat.history[index.row()]
@@ -189,10 +201,43 @@ class HistoryTableModel(QAbstractTableModel):
 
         return QVariant()
 
+    def setData(self, index: QModelIndex, value: Any, role: int) -> bool:
+        if role != Qt.ItemDataRole.EditRole or self.stat is None:
+            return False
+
+        history_row_idx: int = index.row()
+        new_row: bool = history_row_idx >= len(self.stat.history)
+
+        if index.column() == 0:  # Description
+            if new_row:
+                self.stat.history.append((str(value), ""))
+            else:
+                self.stat.history[history_row_idx] = (
+                    str(value),
+                    self.stat.history[history_row_idx][1],
+                )
+
+        elif index.column() == 1:  # Edit
+            # TODO Do error checking on the passed value to make sure it can be parsed.
+            # If it cannot be parsed this operation should fail. Blank cells should have no effect because
+            # if a cell is added with description first, an error should not be thrown
+            if new_row:
+                self.stat.history.append(("", str(value)))
+            else:
+                self.stat.history[history_row_idx] = (
+                    self.stat.history[history_row_idx][0],
+                    str(value),
+                )
+
+        self.layoutChanged.emit()
+        self.editor.stat_table_view.model().layoutChanged.emit()  # type: ignore
+        self.editor.changed_stats.append(self.stat.name)
+        return True
+
     def rowCount(self, parent=QModelIndex()) -> int:
-        if not self.stat or not self.stat.history:
+        if self.stat is None:
             return 0
-        return len(self.stat.history)
+        return len(self.stat.history) + 1
 
     def columnCount(self, parent=QModelIndex()) -> int:
         return len(STAT_EDITOR_HISTORY_TABLE_HEADERS)
