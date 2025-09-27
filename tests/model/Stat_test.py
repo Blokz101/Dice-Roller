@@ -1,5 +1,6 @@
 from typing import Any, Optional
 from src.model.Stat import Stat
+from random import randint
 
 
 class TestStat:
@@ -105,7 +106,7 @@ class TestStat:
 
         for new_value, actual_stat, expected_stat in zip(new_stat_value_list, actual_stat_list, expected_stat_list):
             expected_stat.value = new_value
-            expected_stat.history = []
+            expected_stat.history = [("Initial", str(new_value))]
             actual_stat.set_value(new_value)
 
         for actual_stat, expected_stat in zip(actual_stat_list, expected_stat_list):
@@ -114,7 +115,10 @@ class TestStat:
     def test_calculate_value(self):
         """Tests the calculate value function."""
         stat_history_list: list[list[tuple[str, str]]] = [
-            [("test", "+3")],
+            [],
+            [("test1", "")],
+            [("test1", "+")],
+            [("test1", "+3")],
             [("test1", "3"), ("test2", "*5")],
             [("test1", "+3"), ("test2", "+3*2")],
             [("test1", "-3"), ("test2", ""), ("test3", "-2")],
@@ -122,25 +126,35 @@ class TestStat:
             [("test1", "+3"), ("test2", "-2"), ("test3", "=10")],
             [("test1", "+3"), ("test2", "-2"), ("test3", "=8"), ("test4", "*2+6")],
             [("test1", "+6-2"), ("test2", "*2-5")],
-            [("test1", "+6-2"), ("test2", "fead")]
+            [("test1", "+6-2"), ("test2", "fead"), ("test3", "+3")],
+            [("test1", "+6-2"), ("test2", "fead"), ("test3", "=19")],
         ]
-        expected_values: list[tuple[int, bool]] = [
-            (0+3, True),
-            (0+3*5, True),
-            (0+3+3*2, True),
-            (0-3-2, True),
-            (0+int(5/2), True),
-            (10, True),
-            (8*2+6, True),
-            ((6-2)*2-5, True),
-            (0, False),
+        expected_values_list: list[list[Optional[int]]] = [
+            [0],
+            [0],
+            [None],
+            [3],
+            [3, 3*5],
+            [3, 3+3*2],
+            [-3, -3, -3-2],
+            [5, 5//2],
+            [3, 3-2, 10],
+            [3, 3-2, 8, 8*2+6],
+            [6-2, (6-2)*2-5],
+            [6-2, None, None],
+            [6-2, None, 19],
         ]
 
-        for history, (expected_value, expected_return) in zip(stat_history_list, expected_values):
-            stat: Stat = Stat("test_stat")
+        for history, expected_values in zip(stat_history_list, expected_values_list):
+            initial_value: int = randint(0, 20)
+            stat: Stat = Stat("test_stat", initial_value)
             stat.history = history
-            assert expected_return == stat.calculate_value()
-            assert expected_value == stat.value
+
+            assert expected_values == stat.calculate_value()
+            if expected_values[-1] is None:
+                assert initial_value == stat.value
+            else:
+                assert expected_values[-1] == stat.value
 
     def test_assign(self) -> None:
         """Test the assign function."""

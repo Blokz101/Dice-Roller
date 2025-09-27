@@ -68,32 +68,63 @@ class Stat:
         if new_value == self.value:
             return False
         self.value = new_value
-        self.history = []
+        self.history = [("Initial", str(new_value))]
         return True
-    
-    def calculate_value(self) -> bool:
+
+    def calculate_value(self) -> list[Optional[int]]:
         """
         Sets self.value based on the history list.
         :returns: True if the value could be calculated and was set from the history"
         """
-        self.value = 0
+        # If there is no history
+        if len(self.history) == 0:
+            self.value = 0
+            return [0]
+
+        value_list: list[Optional[int]] = []
         for _, value_mod in self.history:
+
+            prev_value: Optional[int] = 0 if len(value_list) == 0 else value_list[-1]
+
+            # If the modifier is empty skip parsing it
             if value_mod == "":
+                value_list.append(prev_value)
                 continue
+
             try: 
+
+                # If the modifier starts with an =, set it unconditionally 
                 if value_mod[0] == "=" :
-                    self.value = int(eval(value_mod[1:]))
+                    value_list.append(int(eval(value_mod[1:])))
+
+                # If the modifier is a digit, addition to value is assumed
                 elif value_mod[0].isdigit():
-                    self.value += int(eval(value_mod))
+                    if prev_value is None:
+                        value_list.append(None)
+                    else:
+                        value_list.append(prev_value + int(eval(value_mod)))
+
+                # If the modifier is an operation, parse with the operator
                 elif value_mod[0] in "+-*/":
-                    self.value = int(eval(f"{self.value}{value_mod}"))
+                    if prev_value is None:
+                        value_list.append(None)
+                    else:
+                        value_list.append(int(eval(f"{prev_value}{value_mod}")))
+
+                # If the modifier starts with an unknown, it cannot be parsed
                 else:
-                    self.value = 0
-                    return False
+                    value_list.append(None)
+
+            # If the modifier cannot be parsed to an int, it cannot be parsed
+            except SyntaxError:
+                value_list.append(None)
             except ValueError:
-                self.value = 0
-                return False
-        return True
+                value_list.append(None)
+        
+        # Set the value if possible and return the list
+        if value_list[-1] is not None:
+            self.value = value_list[-1]
+        return value_list
 
     def assign(self, other: Stat) -> None:
         """
