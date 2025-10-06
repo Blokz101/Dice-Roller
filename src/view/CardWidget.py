@@ -7,6 +7,7 @@ from PyQt6.QtGui import (
     QDrag,
     QPixmap,
 )
+from src.model.Sheet import Sheet
 from src.model.Card import Card
 from src.model.Stat import Stat
 from src.model.Note import Note
@@ -16,12 +17,15 @@ class CardWidget(QWidget):
 
     def __init__(
         self,
+        sheet: Sheet,
         card: Card,
         parent: Optional[QWidget] = None,
     ):
         super().__init__(parent)
 
         # Model related instance vars
+        self.sheet: Sheet = sheet
+        """Sheet model instance."""
         self.card: Card = card
         """Card model instance."""
 

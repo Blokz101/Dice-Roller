@@ -4,6 +4,7 @@ from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QSizePoli
 from PyQt6.QtCore import QSize, Qt
 from PyQt6.QtGui import QFont
 from src import GRID_SIZE
+from src.model.Sheet import Sheet
 from src.model.Card import Card, StatConfig
 from src.model.Stat import Stat
 from src.model.Note import Note
@@ -65,9 +66,9 @@ class _SingleStatWidget(QWidget):
 class StatWidget(CardWidget):
 
     def __init__(
-        self, card: Card, stat_list: list[Stat], parent: Optional[QWidget] = None
+        self, sheet: Sheet, card: Card, stat_list: list[Stat], parent: Optional[QWidget] = None
     ):
-        super().__init__(card, parent)
+        super().__init__(sheet, card, parent)
 
         # Model related instance vars
         self.stat_list: list[Stat] = stat_list
@@ -130,9 +131,10 @@ class StatWidget(CardWidget):
                 )
 
     @classmethod
-    def from_card(cls, card: Card, data_list: list[Stat | Note]) -> Self:
+    def from_card(cls, sheet: Sheet, card: Card, data_list: list[Stat | Note]) -> Self:
         """
         Creates a StatWidget from a Card model instance.
+        :param sheet: Sheet model instance
         :param card: Card model instance
         :param data_list: List of stats relevant to this widget
         :returns: StatWidget instance
@@ -147,11 +149,11 @@ class StatWidget(CardWidget):
 
         # Select all stats that are relevant to the card
         return cls(
-            card, [stat for stat in stat_list if stat.name in (card.stat_names or [])]
+            sheet, card, [stat for stat in stat_list if stat.name in (card.stat_names or [])]
         )
 
     def edit_card(self) -> None:
-        config = StatCardConfig(self)
+        config = StatCardConfig(self.sheet, self.card)
         config.exec()
 
     def cells_width(self):

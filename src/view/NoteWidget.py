@@ -1,6 +1,7 @@
 from typing import Optional, Self
 from PyQt6.QtWidgets import QWidget, QTextBrowser, QPushButton, QVBoxLayout, QLabel
 from PyQt6.QtCore import Qt
+from src.model.Sheet import Sheet
 from src.model.Stat import Stat
 from src.model.Card import Card
 from src.model.Note import Note
@@ -10,8 +11,8 @@ from src.view.NoteCardConfig import NoteCardConfig
 
 class NoteWidget(CardWidget):
 
-    def __init__(self, card: Card, note: Note, parent: Optional[QWidget] = None):
-        super().__init__(card, parent)
+    def __init__(self, sheet: Sheet, card: Card, note: Note, parent: Optional[QWidget] = None):
+        super().__init__(sheet, card, parent)
 
         # Model related instance vars
         self.note: Note = note
@@ -47,7 +48,7 @@ class NoteWidget(CardWidget):
         self.setLayout(layout)
 
     @classmethod
-    def from_card(cls, card: Card, data_list: list[Stat | Note]) -> Self:
+    def from_card(cls, sheet: Sheet, card: Card, data_list: list[Stat | Note]) -> Self:
         note: Optional[Note] = None
         for data in data_list:
             if not isinstance(data, Note):
@@ -61,7 +62,7 @@ class NoteWidget(CardWidget):
             raise ValueError(
                 "data_list must contain a Note with name that matches card.note_name."
             )
-        return cls(card, note)
+        return cls(sheet, card, note)
 
     def edit_card(self) -> None:
         config = NoteCardConfig(self)

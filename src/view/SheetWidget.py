@@ -77,9 +77,9 @@ class SheetWidget(QScrollArea):
         """Adds all card widgets in the sheet to the grid layout."""
         for card in self.sheet.card_list:
             if card.card_type == CardType.STAT:
-                self.add_card(StatWidget.from_card(card, self.sheet.stat_list))
+                self.add_card(StatWidget.from_card(self.sheet, card, self.sheet.stat_list))
             else:
-                self.add_card(NoteWidget.from_card(card, self.sheet.note_list))
+                self.add_card(NoteWidget.from_card(self.sheet, card, self.sheet.note_list))
 
     def sizeHint(self) -> QSize:
         """
