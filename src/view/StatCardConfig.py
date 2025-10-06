@@ -1,7 +1,7 @@
 from typing import Optional, Any
 from copy import deepcopy
 from PyQt6.QtWidgets import QDialog, QWidget, QAbstractItemView
-from PyQt6.QtCore import QAbstractTableModel, QAbstractListModel, QModelIndex, Qt, QVariant, QItemSelection
+from PyQt6.QtCore import QAbstractTableModel, QAbstractListModel, QModelIndex, Qt, QVariant, QItemSelectionModel
 from src.view import CARD_CONFIG_STAT_TABLE_HEADERS
 from src.view.Ui_StatCardConfig import Ui_StatCardConfig
 from src.model.Sheet import Sheet
@@ -16,14 +16,22 @@ class StatCardConfig(QDialog, Ui_StatCardConfig):
         self.sheet: Sheet = deepcopy(sheet)
         """Card being edited."""
         self.card: Card = card
-        self.card_config_stat_model: CardConfigStatTableModel = CardConfigStatTableModel(self.card)
+        self.card_config_stat_table_model: CardConfigStatTableModel = CardConfigStatTableModel(self.card)
         """Model for the card stats table view."""
-        self.stat_list_model: StatListModel = StatListModel([stat.name for stat in sheet.stat_list])
+        self.stat_list_model: StatListModel = StatListModel(
+            sorted(
+                [
+                    stat.name
+                    for stat in sheet.stat_list
+                    if stat.name not in (self.card.stat_names or [])
+                ]
+            )
+        )
         """Model for the stat list view."""
 
         self.setupUi(self) # type: ignore
 
-        self.card_config_stat_view.setModel(self.card_config_stat_model)
+        self.card_config_stat_table_view.setModel(self.card_config_stat_table_model)
         self.stat_list_view.setModel(self.stat_list_model)
 
         self.stat_list_view.clicked.connect(self.stat_list_view_clicked_slot) # type: ignore
@@ -32,16 +40,50 @@ class StatCardConfig(QDialog, Ui_StatCardConfig):
         self.delete_button.clicked.connect(self.delete_button_slot)  # type: ignore
 
         # Configure widgets
-        self.card_config_stat_view.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self.card_config_stat_table_view.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self.stat_list_view.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
     def order_up_button_slot(self) -> None:
         """Called when the order up button is clicked."""
+        if self.card.stat_names is None:
+            return
+        selected_row_index: int = self.card_config_stat_table_view.currentIndex().row()
+        if selected_row_index < 1:
+            return
+        self.card.swap_stats(selected_row_index, selected_row_index - 1)
+        self.card_config_stat_table_model.layoutChanged.emit()
+        self.card_config_stat_table_view.setCurrentIndex(
+            self.card_config_stat_table_model.index(selected_row_index-1, 0)
+        )
 
     def order_down_button_slot(self) -> None:
         """Called when the order down button is clicked."""
+        if self.card.stat_names is None:
+            return
+        selected_row_index: int = self.card_config_stat_table_view.currentIndex().row()
+        if selected_row_index > len(self.card.stat_names) - 2:
+            return
+        self.card.swap_stats(selected_row_index, selected_row_index + 1)
+        self.card_config_stat_table_model.layoutChanged.emit()
+        self.card_config_stat_table_view.setCurrentIndex(
+            self.card_config_stat_table_model.index(selected_row_index+1, 0)
+        )
 
     def delete_button_slot(self) -> None:
         """Called when the delete button is clicked."""
+        if self.card.stat_names is None:
+            return
+        table_selection_model: Optional[QItemSelectionModel] = self.card_config_stat_table_view.selectionModel()
+        if table_selection_model is None:
+            return
+        for selected_stat_name in [self.card.stat_names[idx.row()] for idx in table_selection_model.selectedRows(0)]:
+            if not self.card.delete_stat(selected_stat_name):
+               continue 
+            self.stat_list_model.stat_name_list.append(selected_stat_name)
+            self.stat_list_model.stat_name_list.sort()
+            self.card_config_stat_table_model.layoutChanged.emit()
+            self.stat_list_model.layoutChanged.emit()
+        table_selection_model.clearSelection()
 
     def stat_list_view_clicked_slot(self, index: QModelIndex) -> None:
         """
@@ -49,6 +91,12 @@ class StatCardConfig(QDialog, Ui_StatCardConfig):
         :param index: Index of the clicked item
         """
         selected_stat_name: str = self.stat_list_model.stat_name_list[index.row()]
+
+        self.stat_list_model.stat_name_list.remove(selected_stat_name)
+        self.stat_list_model.layoutChanged.emit()
+
+        self.card.add_stat(selected_stat_name)
+        self.card_config_stat_table_model.layoutChanged.emit()
 
 class CardConfigStatTableModel(QAbstractTableModel):
     """Table model that displays the list of stats currently on the card."""
@@ -115,7 +163,6 @@ class StatListModel(QAbstractListModel):
     def data(self, index: QModelIndex, role: int) -> Any:
         if role == Qt.ItemDataRole.DisplayRole:
             return self.stat_name_list[index.row()]
-
         return QVariant()
 
     def rowCount(self, parent: QModelIndex = QModelIndex()) -> int: 
