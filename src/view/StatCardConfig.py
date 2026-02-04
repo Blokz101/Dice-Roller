@@ -1,7 +1,7 @@
 from typing import Optional, Any
 from copy import deepcopy
-from PyQt6.QtWidgets import QDialog, QWidget, QAbstractItemView
-from PyQt6.QtCore import QAbstractTableModel, QAbstractListModel, QModelIndex, Qt, QVariant, QItemSelectionModel
+from PyQt6.QtWidgets import QDialog, QWidget, QAbstractItemView, QStyledItemDelegate, QStyleOptionViewItem, QCheckBox
+from PyQt6.QtCore import QAbstractTableModel, QAbstractListModel, QModelIndex, Qt, QVariant, QItemSelectionModel, QAbstractItemModel
 from src.view import CARD_CONFIG_STAT_TABLE_HEADERS
 from src.view.Ui_StatCardConfig import Ui_StatCardConfig
 from src.model.Sheet import Sheet
@@ -14,8 +14,11 @@ class StatCardConfig(QDialog, Ui_StatCardConfig):
         super().__init__(parent)
 
         self.sheet: Sheet = deepcopy(sheet)
-        """Card being edited."""
+        """Sheet being edited."""
         self.card: Card = card
+        """Card being edited."""
+        self.removed_configs: dict[str, StatConfig] = {}
+        """List of stat configs that have been removed from the card. Used when the user adds a previously removed StatConfig. Previous values are replaced instead of creating blank StatConfig."""
         self.card_config_stat_table_model: CardConfigStatTableModel = CardConfigStatTableModel(self.card)
         """Model for the card stats table view."""
         self.stat_list_model: StatListModel = StatListModel(
@@ -76,9 +79,13 @@ class StatCardConfig(QDialog, Ui_StatCardConfig):
         table_selection_model: Optional[QItemSelectionModel] = self.card_config_stat_table_view.selectionModel()
         if table_selection_model is None:
             return
+
+        # Attempt to delete the stat
         for selected_stat_name in [self.card.stat_names[idx.row()] for idx in table_selection_model.selectedRows(0)]:
-            if not self.card.delete_stat(selected_stat_name):
+            deleted_stat: Optional[StatConfig] = self.card.delete_stat(selected_stat_name)
+            if deleted_stat is None:
                continue 
+            self.removed_configs[selected_stat_name] = deleted_stat
             self.stat_list_model.stat_name_list.append(selected_stat_name)
             self.stat_list_model.stat_name_list.sort()
             self.card_config_stat_table_model.layoutChanged.emit()
@@ -95,7 +102,10 @@ class StatCardConfig(QDialog, Ui_StatCardConfig):
         self.stat_list_model.stat_name_list.remove(selected_stat_name)
         self.stat_list_model.layoutChanged.emit()
 
-        self.card.add_stat(selected_stat_name)
+        self.card.add_stat(
+            selected_stat_name,
+            config=self.removed_configs.get(selected_stat_name)
+        )
         self.card_config_stat_table_model.layoutChanged.emit()
 
 class CardConfigStatTableModel(QAbstractTableModel):
@@ -107,10 +117,15 @@ class CardConfigStatTableModel(QAbstractTableModel):
         """Card being edited."""
         
     def flags(self, index: QModelIndex):
-        return Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable
-
+        flag: Qt.ItemFlag = Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable
+        if index.column() in [1, 2]:
+            flag = flag | Qt.ItemFlag.ItemIsEditable
+        if index.column() in [3, 4]:
+            flag = flag | Qt.ItemFlag.ItemIsUserCheckable
+        return flag
+        
     def data(self, index: QModelIndex, role: int) -> Any:
-        if self.card.stat_names is None or role != Qt.ItemDataRole.DisplayRole:
+        if self.card.stat_names is None:
             return QVariant()
         stat_name: str = self.card.stat_names[index.row()]
 
@@ -118,19 +133,55 @@ class CardConfigStatTableModel(QAbstractTableModel):
         if config is None:
             return QVariant()
         
-        if index.column() == 0:  # Stat Name column
-            return stat_name
-        elif index.column() == 1:  # Display Name column
-            return config.display_name
-        elif index.column() == 2:  # Subtext column
-            return config.subtext
-        elif index.column() == 3:  # Max column
-            return config.show_max or "False"
-        elif index.column() == 4:  # Min column
-            return config.show_min or "False"
-        else:  # No match, unknown column
-            return QVariant()
+        if role == Qt.ItemDataRole.DisplayRole:
+            if index.column() == 0:  # Stat Name column
+                return stat_name
+            elif index.column() == 1:  # Display Name column
+                return config.display_name
+            elif index.column() == 2:  # Subtext column
+                return config.subtext
+            elif index.column() == 3:  # Max column
+                return "True" if config.show_max else "False"
+            elif index.column() == 4:  # Min column
+                return "True" if config.show_min else "False"
 
+        if role == Qt.ItemDataRole.CheckStateRole:
+            if index.column() == 3:  # Max column
+                return Qt.CheckState.Checked if config.show_max or False else Qt.CheckState.Unchecked
+            elif index.column() == 4:  # Min column
+                return Qt.CheckState.Checked if config.show_min or False else Qt.CheckState.Unchecked
+
+        return QVariant()
+
+    def setData(self, index: QModelIndex, value: Any, role: int) -> bool:
+        if self.card.stat_names is None:
+            return False
+        stat_name: str = self.card.stat_names[index.row()]
+
+        config: Optional[StatConfig] = self.card.config_for_stat(stat_name)
+        if config is None:
+            return False
+
+        if role == Qt.ItemDataRole.EditRole:
+            if index.column() == 1: # Display Name
+                config.display_name = str(value)
+                return True
+            if index.column() == 2: # Subtext
+                config.subtext = str(value)
+                return True
+            return False
+
+        if role == Qt.ItemDataRole.CheckStateRole:
+            if index.column() == 3:
+                config.show_max = not config.show_max
+                return True
+            if index.column() == 4:
+                config.show_min = not config.show_min
+                return True
+            return False
+
+        return False 
+    
     def headerData(
         self,
         section: int,

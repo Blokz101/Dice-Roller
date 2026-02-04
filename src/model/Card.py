@@ -196,29 +196,30 @@ class Card:
         else:
             self.stat_configs = None
 
-    def add_stat(self, stat_name: str) -> bool:
+    def add_stat(self, stat_name: str, config: Optional[StatConfig] = None) -> bool:
         """
         Adds a stat to this card and creates a new stat config for it.
         :param stat_name: stat_name
+        :param config: Optional preconfigured config
         :returns: True if the stat was added, false otherwise
         """
         if self.stat_names is None or self.stat_configs is None or stat_name in self.stat_names:
             return False
         self.stat_names.append(stat_name)
-        self.stat_configs[stat_name] = StatConfig()
+        self.stat_configs[stat_name] = config or StatConfig()
         return True
 
-    def delete_stat(self, stat_name: str) -> bool:
+    def delete_stat(self, stat_name: str) -> Optional[StatConfig]:
         """
         Deletes a stat and its config from this card.
         :param stat_name: name of stat to delete
-        :returns: True if the stat existed and was deleted, false otherwise
+        :returns: The deleted stat if the stat was deleted, otherwise None.
         """
         if self.stat_names is None or self.stat_configs is None or stat_name not in self.stat_names or stat_name not in self.stat_configs:
-            return False
+            return None
         self.stat_names.remove(stat_name)
-        self.stat_configs.pop(stat_name)
-        return True
+        config: StatConfig = self.stat_configs.pop(stat_name)
+        return config
 
     def swap_stats(self, idx1: int, idx2: int) -> bool:
         """

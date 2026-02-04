@@ -155,6 +155,7 @@ class StatWidget(CardWidget):
     def edit_card(self) -> None:
         config = StatCardConfig(self.sheet, self.card)
         config.exec()
+        self.update_stats(self.card.stat_names or [])
 
     def cells_width(self):
         hinted_size: QSize = super().sizeHint()
